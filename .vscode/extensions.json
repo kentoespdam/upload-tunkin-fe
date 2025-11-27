@@ -1,0 +1,15 @@
+{
+    "recommendations": [
+        "patbenatar.advanced-new-file",
+        "formulahendry.auto-rename-tag",
+        "biomejs.biome",
+        "mikestead.dotenv",
+        "sleistner.vscode-fileutils",
+        "wix.vscode-import-cost",
+        "ms-vscode.vscode-typescript-next",
+        "pulkitgangwar.nextjs-snippets",
+        "csstools.postcss",
+        "bradlc.vscode-tailwindcss",
+        "codeium.codeium"
+    ]
+}
