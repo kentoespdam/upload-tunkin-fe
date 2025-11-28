@@ -1,0 +1,4 @@
+{
+    "biome.configurationPath": "./biome.json",
+    "editor.defaultFormatter": "biomejs.biome"
+}

@@ -19,27 +19,22 @@ const ACCEPTED_FILE_TYPES = [
 ];
 
 export const UploadTunkinSchema = z.object({
+  tahun: z.string().min(4, "Periode wajib diisi"),
+  bulan: z.string().min(2, "Periode wajib diisi"),
   file: z
-    .any()
-    .refine(
-      (files) => Array.from(files).every((file) => file instanceof File),
-      "File wajib diisi",
-    )
-    .refine(
-      (files) =>
-        Array.from(files).every(
-          (file) =>
-            file instanceof File && ACCEPTED_FILE_TYPES.includes(file.type),
+    .union([
+      z
+        .instanceof(File, { message: "File wajib diisi" })
+        .refine((file) => file.size <= MAX_UPLOAD_SIZE, "Max File Upload 10 MB")
+        .refine(
+          (file) => ACCEPTED_FILE_TYPES.includes(file.type),
+          "Invalid file type",
         ),
-      "Invalid file type",
-    )
-    .refine(
-      (files) =>
-        Array.from(files).every(
-          (file) => file instanceof File && file.size <= MAX_UPLOAD_SIZE,
-        ),
-      "Maks File Upload 10 MB",
-    ),
+      z.string(),
+    ])
+    .refine((value) => value instanceof File || typeof value === "string", {
+      message: "File wajib diisi",
+    }),
 });
 
 export type UploadTunkinSchema = z.infer<typeof UploadTunkinSchema>;
