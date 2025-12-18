@@ -78,7 +78,7 @@ const LoginForm = () => {
 		onSuccess: (data: BaseResponse<LoginToken>) => {
 			if (data.errors) throw data.errors;
 			toast.success(data.message);
-			push("/");
+			push("/dashboard");
 		},
 		onError: (error: string[]) => {
 			toast.error(error.join("\n"));

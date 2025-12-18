@@ -3,7 +3,7 @@ import { SidebarInset, SidebarProvider } from "../ui/sidebar";
 import TemplateHeader from "./template-header";
 import TemplateSidebar from "./template-sidebar";
 
-const AppTemplate = ({
+const AppTemplate = async ({
 	children,
 	user,
 }: {

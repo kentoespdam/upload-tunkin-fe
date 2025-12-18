@@ -33,22 +33,23 @@ WORKDIR /app
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED=1
 
-ENV NODE_ENV=development \
+ENV NODE_ENV=production \
     PORT=3000 \
     HOSTNAME="0.0.0.0"
 
 RUN groupadd --system --gid 1001 nodejs && \
     useradd --system --uid 1001 --gid nodejs nextjs
 
-COPY --from=builder /app/public ./public
-
+    
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=user:group /app/.next/static ./.next/static
+# COPY --from=builder --chown=user:group /app/.env ./
 
 USER nextjs
 
 EXPOSE 3000
 
-CMD ["bun", "./server.js"]
+# CMD ["bun", "./server.js"]

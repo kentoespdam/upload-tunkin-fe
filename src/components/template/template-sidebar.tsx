@@ -14,7 +14,7 @@ import {
 import TemplateNavMain from "./template-nav-main";
 import TemplateUserNav from "./template-user";
 
-const TemplateSidebar = ({
+const TemplateSidebar = async ({
 	user,
 	...props
 }: { user: JwtUserToken } & React.ComponentProps<typeof Sidebar>) => {
