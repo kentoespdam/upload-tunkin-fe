@@ -3,92 +3,92 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
 import {
-    Field,
-    FieldGroup,
-    FieldLegend,
-    FieldSet,
+	Field,
+	FieldGroup,
+	FieldLegend,
+	FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useDebounceCallback } from "@/hooks/use-debounce-callback";
 import TunkinFormDialog from "./form-dialog";
 
 const useTunkinFilter = () => {
-  const params = useSearchParams();
-  const { replace } = useRouter();
+	const params = useSearchParams();
+	const { replace } = useRouter();
 
-  const { periode, nipam, nama } = useMemo(
-    () => ({
-      periode: params.get("periode") ?? "",
-      nipam: params.get("nipam") ?? "",
-      nama: params.get("nama") ?? "",
-    }),
-    [params],
-  );
+	const { periode, nipam, nama } = useMemo(
+		() => ({
+			periode: params.get("periode") ?? "",
+			nipam: params.get("nipam") ?? "",
+			nama: params.get("nama") ?? "",
+		}),
+		[params],
+	);
 
-  const replaceUrl = useCallback(
-    (field: string, value: string) => {
-      const search = new URLSearchParams(params);
-      if (!["page", "size"].includes(field)) {
-        search.delete("page");
-        search.delete("size");
-      }
-      if (value === "") search.delete(field);
-      else search.set(field, value);
-      replace(`?${search.toString()}`);
-    },
-    [params, replace],
-  );
+	const replaceUrl = useCallback(
+		(field: string, value: string) => {
+			const search = new URLSearchParams(params);
+			if (!["page", "size"].includes(field)) {
+				search.delete("page");
+				search.delete("size");
+			}
+			if (value === "") search.delete(field);
+			else search.set(field, value);
+			replace(`?${search.toString()}`);
+		},
+		[params, replace],
+	);
 
-  const debounceSearch = useDebounceCallback(replaceUrl, 500);
+	const debounceSearch = useDebounceCallback(replaceUrl, 500);
 
-  const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    debounceSearch(id, value);
-  };
+	const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { id, value } = e.target;
+		debounceSearch(id, value);
+	};
 
-  return {
-    periode,
-    nipam,
-    nama,
-    changeHandler,
-  };
+	return {
+		periode,
+		nipam,
+		nama,
+		changeHandler,
+	};
 };
 const TunkinFilterComponent = () => {
-  const { periode, nipam, nama, changeHandler } = useTunkinFilter();
-  return (
-    <FieldSet className="pb-2">
-      <FieldLegend>Filter</FieldLegend>
-      <FieldGroup className="max-w-full flex flex-wrap flex-row justify-start gap-2 mb-2">
-        <Field className="w-fit">
-          <Input
-            id="periode"
-            defaultValue={periode}
-            onChange={changeHandler}
-            placeholder="Periode"
-          />
-        </Field>
-        <Field className="w-fit">
-          <Input
-            id="nipam"
-            defaultValue={nipam}
-            onChange={changeHandler}
-            placeholder="Nipam"
-          />
-        </Field>
-        <Field className="w-fit">
-          <Input
-            id="nama"
-            defaultValue={nama}
-            onChange={changeHandler}
-            placeholder="Nama"
-          />
-        </Field>
-        <Field className="w-fit">
-          <TunkinFormDialog />
-        </Field>
-      </FieldGroup>
-    </FieldSet>
-  );
+	const { periode, nipam, nama, changeHandler } = useTunkinFilter();
+	return (
+		<FieldSet className="pb-2">
+			<FieldLegend>Filter</FieldLegend>
+			<FieldGroup className="max-w-full flex flex-wrap flex-row justify-start gap-2 mb-2">
+				<Field className="w-fit">
+					<Input
+						id="periode"
+						defaultValue={periode}
+						onChange={changeHandler}
+						placeholder="Periode"
+					/>
+				</Field>
+				<Field className="w-fit">
+					<Input
+						id="nipam"
+						defaultValue={nipam}
+						onChange={changeHandler}
+						placeholder="Nipam"
+					/>
+				</Field>
+				<Field className="w-fit">
+					<Input
+						id="nama"
+						defaultValue={nama}
+						onChange={changeHandler}
+						placeholder="Nama"
+					/>
+				</Field>
+				<Field className="w-fit">
+					<TunkinFormDialog />
+				</Field>
+			</FieldGroup>
+		</FieldSet>
+	);
 };
 
 export default TunkinFilterComponent;

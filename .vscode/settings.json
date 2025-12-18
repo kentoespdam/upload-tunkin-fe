@@ -1,4 +1,11 @@
 {
-    "biome.configurationPath": "./biome.json",
-    "editor.defaultFormatter": "biomejs.biome"
+	"biome.configurationPath": "./biome.json",
+	"editor.defaultFormatter": "biomejs.biome",
+	"biome.requireConfiguration": true,
+	"biome.lsp.bin": "./node_modules/.bin/biome",
+	"editor.codeActionsOnSave": {
+		"source.organizeImports.biome": "explicit",
+		"source.fixAll.biome": "explicit"
+	},
+	"tailwindCSS.lint.suggestCanonicalClasses": "error"
 }

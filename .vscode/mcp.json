@@ -1,11 +1,8 @@
 {
 	"servers": {
 		"next-devtools": {
-			"command":"bunx",
-			"args":[
-				"-y",
-				"next-devtools-mcp@latest"
-			]
+			"command": "bunx",
+			"args": ["-y", "next-devtools-mcp@latest"]
 		}
 	}
 }

@@ -1,0 +1,10 @@
+services:
+  upload-tunkin-fe:
+    container_name: upload-tunkin-fe
+    image: upload-tunkin-fe:latest
+    build: .
+    ports:
+      - "3003:3000"
+    env_file:
+      - .env.local
+    entrypoint: ["bun","./server.js"]
