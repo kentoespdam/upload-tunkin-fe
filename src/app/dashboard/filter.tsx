@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
+import OrganizationList from "@/components/form/organization-list";
 import {
 	Field,
 	FieldGroup,
@@ -16,11 +17,12 @@ const useTunkinFilter = () => {
 	const params = useSearchParams();
 	const { replace } = useRouter();
 
-	const { periode, nipam, nama } = useMemo(
+	const { periode, nipam, nama, orgId } = useMemo(
 		() => ({
 			periode: params.get("periode") ?? "",
 			nipam: params.get("nipam") ?? "",
 			nama: params.get("nama") ?? "",
+			orgId: params.get("orgId") ?? "",
 		}),
 		[params],
 	);
@@ -46,15 +48,21 @@ const useTunkinFilter = () => {
 		debounceSearch(id, value);
 	};
 
+	const selectChange = (id: string, value: string) => {
+		debounceSearch(id, value);
+	};
+
 	return {
 		periode,
 		nipam,
 		nama,
+		orgId,
 		changeHandler,
+		selectChange
 	};
 };
 const TunkinFilterComponent = () => {
-	const { periode, nipam, nama, changeHandler } = useTunkinFilter();
+	const { periode, nipam, nama, orgId, changeHandler, selectChange } = useTunkinFilter();
 	return (
 		<FieldSet className="pb-2">
 			<FieldLegend>Filter</FieldLegend>
@@ -81,6 +89,13 @@ const TunkinFilterComponent = () => {
 						defaultValue={nama}
 						onChange={changeHandler}
 						placeholder="Nama"
+					/>
+				</Field>
+				<Field className="w-fit">
+					<OrganizationList
+						id="orgId"
+						onChange={selectChange}
+						defaultValue={orgId}
 					/>
 				</Field>
 				<Field className="w-fit">
