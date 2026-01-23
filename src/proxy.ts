@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { createSession, getSession } from "./lib/session";
+import { createSession, destroySession, getSession } from "./lib/session";
 import { appConfig } from "./lib/utils";
 
 export const config = {
@@ -17,6 +17,7 @@ export default async function proxy(req: NextRequest) {
 	const isAuthenticated = session.refresh_token !== "";
 	const isAuthorized = session.access_token !== "";
 
+	// Jika tidak ada refresh token, redirect ke login
 	if (!isAuthenticated) {
 		if (!isPublicRoute) {
 			return NextResponse.redirect(new URL("/login", req.url));
@@ -24,33 +25,49 @@ export default async function proxy(req: NextRequest) {
 		return NextResponse.next();
 	}
 
+	// Jika access token tidak ada, coba refresh
 	if (!isAuthorized) {
 		const newToken = await renewAccess(session.refresh_token);
 		if (newToken) {
+			// Berhasil refresh, buat response dan set cookies langsung
+			const response = NextResponse.next();
 			await createSession(newToken);
-			return NextResponse.redirect(req.url);
+			return response;
 		}
-		if (!isPublicRoute)
+
+		// Gagal refresh - hapus session untuk menghindari loop
+		await destroySession();
+		if (!isPublicRoute) {
 			return NextResponse.redirect(new URL("/login", req.url));
+		}
 	}
 
 	return NextResponse.next();
 }
 
 async function renewAccess(refresh_token: string) {
-	const formData = { token: refresh_token };
-	const req = await fetch(`${appConfig.apiUrl}/refresh`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(formData),
-	});
+	try {
+		const formData = { token: refresh_token };
+		const req = await fetch(`${appConfig.apiUrl}/refresh`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(formData),
+			// Tambahkan timeout untuk menghindari hanging
+			signal: AbortSignal.timeout(10000), // 10 detik timeout
+		});
 
-	const result = await req.json();
-	if (!req.ok) {
+		if (!req.ok) {
+			console.error(`Refresh token failed with status: ${req.status}`);
+			return null;
+		}
+
+		const result = await req.json();
+		return result.data;
+	} catch (error) {
+		// Tangani network error, timeout, dll
+		console.error("Error during token refresh:", error);
 		return null;
 	}
-
-	return result.data;
 }

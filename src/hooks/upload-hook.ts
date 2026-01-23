@@ -103,7 +103,7 @@ export const useTunkinFormDialog = ({
 				},
 				onError: (error) => {
 					toast.error("Gagal memeriksa data existing");
-					console.error("Error checking existing data:", error);
+					console.error("Error checking existing data:", error.message);
 				},
 			});
 		},
