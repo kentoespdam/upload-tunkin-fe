@@ -16,3 +16,11 @@ export const getUrut = (data: PageResponse<unknown>): number => {
 	if (!data) return 0;
 	return data.is_first ? 1 : (data.page - 1) * data.page_size + 1;
 };
+
+export const formatRupiah = (number: number): string => {
+	return new Intl.NumberFormat("id-ID", {
+		style: "currency",
+		currency: "IDR",
+		minimumFractionDigits: 0,
+	}).format(number);
+};

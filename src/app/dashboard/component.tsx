@@ -1,9 +1,10 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import LoadingTable from "@/components/commons/loading-table";
 import PaginationBuilder from "@/components/commons/pageable";
+import { Badge } from "@/components/ui/badge";
 import {
 	Table,
 	TableBody,
@@ -12,7 +13,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { cn, getUrut } from "@/lib/utils";
+import { cn, formatRupiah, getUrut } from "@/lib/utils";
 import type { PageResponse } from "@/tipes/commons";
 import { type Tunkin, tunkinTableHeders } from "@/tipes/tunkin";
 import { fetchTunkin } from "./action";
@@ -20,12 +21,15 @@ import { fetchTunkin } from "./action";
 // Types
 type TunkinTableBodyProps = {
 	data: PageResponse<Tunkin>;
+	className?: string;
+	style?: React.CSSProperties;
 };
 
 type TunkinRow = Tunkin & { urut: number };
 
 // Constants
 const TABLE_MIN_HEIGHT = 411;
+const ROW_ANIM_DELAY_MS = 40;
 
 // Custom hook untuk data fetching
 const useTunkinData = () => {
@@ -49,7 +53,7 @@ const useTunkinData = () => {
 };
 
 // Table Body Component
-const TunkinTableBody = memo(({ data }: TunkinTableBodyProps) => {
+const TunkinTableBody = memo(({ data, className, style }: TunkinTableBodyProps) => {
 	const rows = useMemo((): TunkinRow[] => {
 		const urut = getUrut(data);
 		return data.content.map((row, index) => ({
@@ -59,9 +63,9 @@ const TunkinTableBody = memo(({ data }: TunkinTableBodyProps) => {
 	}, [data]);
 
 	return (
-		<TableBody>
-			{rows.map((row) => (
-				<TunkinTableRow key={row.id} row={row} />
+		<TableBody className={className} style={style}>
+			{rows.map((row, index) => (
+				<TunkinTableRow key={row.id} row={row} index={index} />
 			))}
 		</TableBody>
 	);
@@ -69,9 +73,12 @@ const TunkinTableBody = memo(({ data }: TunkinTableBodyProps) => {
 TunkinTableBody.displayName = "TunkinTableBody";
 
 // Individual Table Row Component
-const TunkinTableRow = memo(({ row }: { row: TunkinRow }) => {
+const TunkinTableRow = memo(({ row, index }: { row: TunkinRow; index: number }) => {
 	return (
-		<TableRow className={cn("odd:bg-muted hover:bg-primary/15")}>
+		<TableRow
+			className={cn("odd:bg-muted hover:bg-primary/15 animate-row")}
+			style={{ animationDelay: `${index * ROW_ANIM_DELAY_MS}ms` }}
+		>
 			<TableCell className="border" align="right" width={30}>
 				{row.urut}
 			</TableCell>
@@ -80,8 +87,12 @@ const TunkinTableRow = memo(({ row }: { row: TunkinRow }) => {
 			<TableCell className="border">{row.nama}</TableCell>
 			<TableCell className="border">{row.jabatan}</TableCell>
 			<TableCell className="border">{row.organisasi}</TableCell>
-			<TableCell className="border">{row.status_pegawai}</TableCell>
-			<TableCell className="border">{row.nominal}</TableCell>
+			<TableCell className="border" align="center">
+				<Badge variant={"outline"}>{row.status_pegawai}</Badge>
+			</TableCell>
+			<TableCell className="border" align="right">
+				{formatRupiah(row.nominal)}
+			</TableCell>
 		</TableRow>
 	);
 });
@@ -114,18 +125,41 @@ const TunkinComponent = memo(() => {
 	const showLoading = isLoading || isFetching;
 	const isDataEmpty = !data || data.is_empty;
 
+	// Presence-managed mount/unmount crossfade between loading and data views
+	const PRESENCE_EXIT_MS = 180;
+	const [currentView, setCurrentView] = useState<"loading" | "data">(
+		isDataEmpty ? "loading" : "data",
+	);
+	const [isSwapping, setIsSwapping] = useState(false);
+
+	useEffect(() => {
+		const nextView = isDataEmpty ? "loading" : "data";
+		if (nextView !== currentView) {
+			setIsSwapping(true);
+			const t = setTimeout(() => {
+				setCurrentView(nextView);
+				setIsSwapping(false);
+			}, PRESENCE_EXIT_MS);
+			return () => clearTimeout(t);
+		}
+	}, [isDataEmpty, currentView]);
+
 	return (
 		<div className="grid gap-2">
 			<div className="overflow-auto" style={{ minHeight: TABLE_MIN_HEIGHT }}>
-				<Table className="border">
+				<Table className="border animate-table-mount">
 					<TunkinTableHeader />
 
-					{!isDataEmpty ? (
-						<TunkinTableBody data={data} />
+					{currentView === "data" ? (
+						<TunkinTableBody
+							data={data as PageResponse<Tunkin>}
+							className={cn(isSwapping ? "presence-exit" : "presence-enter")}
+						/>
 					) : (
 						<LoadingTable
 							columns={tunkinTableHeders}
 							showLoading={showLoading}
+							className={cn(isSwapping ? "presence-exit" : "presence-enter")}
 						/>
 					)}
 				</Table>

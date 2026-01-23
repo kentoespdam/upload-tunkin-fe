@@ -120,3 +120,48 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+/* Table + Row entrance animations */
+@layer utilities {
+	@keyframes fadeSlideIn {
+		from {
+			opacity: 0;
+			transform: translateY(6px) scale(0.98);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0) scale(1);
+		}
+	}
+
+	.animate-row {
+		animation: fadeSlideIn 360ms ease both;
+		will-change: opacity, transform;
+	}
+
+	.animate-table-mount {
+		animation: fadeSlideIn 220ms ease both;
+	}
+}
+
+/* Presence mount/unmount transitions */
+@layer utilities {
+	@keyframes fadeOut {
+		from {
+			opacity: 1;
+			transform: translateY(0) scale(1);
+		}
+		to {
+			opacity: 0;
+			transform: translateY(4px) scale(0.99);
+		}
+	}
+
+	.presence-enter {
+		animation: fadeSlideIn 240ms ease both;
+	}
+
+	.presence-exit {
+		animation: fadeOut 180ms ease both;
+	}
+}
