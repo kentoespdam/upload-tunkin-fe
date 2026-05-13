@@ -1,7 +1,7 @@
 {
-  "database": "dolt",
-  "backend": "dolt",
-  "dolt_mode": "embedded",
-  "dolt_database": "upload_tunkin_fe",
-  "project_id": "c53a4352-ad16-44c3-acca-01cad932e2e2"
+	"database": "dolt",
+	"backend": "dolt",
+	"dolt_mode": "embedded",
+	"dolt_database": "upload_tunkin_fe",
+	"project_id": "c53a4352-ad16-44c3-acca-01cad932e2e2"
 }

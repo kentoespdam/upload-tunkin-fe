@@ -275,9 +275,7 @@ const OrganizationList = memo(
 					{/* 17. Header dengan animasi */}
 					<div className="border-b px-4 py-3">
 						<h3 className="font-semibold text-lg">Select Organization</h3>
-						<p className="text-sm text-muted-foreground">
-							Search by name
-						</p>
+						<p className="text-sm text-muted-foreground">Search by name</p>
 					</div>
 
 					<CommandInput

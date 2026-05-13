@@ -53,49 +53,53 @@ const useTunkinData = () => {
 };
 
 // Table Body Component
-const TunkinTableBody = memo(({ data, className, style }: TunkinTableBodyProps) => {
-	const rows = useMemo((): TunkinRow[] => {
-		const urut = getUrut(data);
-		return data.content.map((row, index) => ({
-			...row,
-			urut: urut + index,
-		}));
-	}, [data]);
+const TunkinTableBody = memo(
+	({ data, className, style }: TunkinTableBodyProps) => {
+		const rows = useMemo((): TunkinRow[] => {
+			const urut = getUrut(data);
+			return data.content.map((row, index) => ({
+				...row,
+				urut: urut + index,
+			}));
+		}, [data]);
 
-	return (
-		<TableBody className={className} style={style}>
-			{rows.map((row, index) => (
-				<TunkinTableRow key={row.id} row={row} index={index} />
-			))}
-		</TableBody>
-	);
-});
+		return (
+			<TableBody className={className} style={style}>
+				{rows.map((row, index) => (
+					<TunkinTableRow key={row.id} row={row} index={index} />
+				))}
+			</TableBody>
+		);
+	},
+);
 TunkinTableBody.displayName = "TunkinTableBody";
 
 // Individual Table Row Component
-const TunkinTableRow = memo(({ row, index }: { row: TunkinRow; index: number }) => {
-	return (
-		<TableRow
-			className={cn("odd:bg-muted hover:bg-primary/15 animate-row")}
-			style={{ animationDelay: `${index * ROW_ANIM_DELAY_MS}ms` }}
-		>
-			<TableCell className="border" align="right" width={30}>
-				{row.urut}
-			</TableCell>
-			<TableCell className="border">{row.periode}</TableCell>
-			<TableCell className="border">{row.nipam}</TableCell>
-			<TableCell className="border">{row.nama}</TableCell>
-			<TableCell className="border">{row.jabatan}</TableCell>
-			<TableCell className="border">{row.organisasi}</TableCell>
-			<TableCell className="border" align="center">
-				<Badge variant={"outline"}>{row.status_pegawai}</Badge>
-			</TableCell>
-			<TableCell className="border" align="right">
-				{formatRupiah(row.nominal)}
-			</TableCell>
-		</TableRow>
-	);
-});
+const TunkinTableRow = memo(
+	({ row, index }: { row: TunkinRow; index: number }) => {
+		return (
+			<TableRow
+				className={cn("odd:bg-muted hover:bg-primary/15 animate-row")}
+				style={{ animationDelay: `${index * ROW_ANIM_DELAY_MS}ms` }}
+			>
+				<TableCell className="border" align="right" width={30}>
+					{row.urut}
+				</TableCell>
+				<TableCell className="border">{row.periode}</TableCell>
+				<TableCell className="border">{row.nipam}</TableCell>
+				<TableCell className="border">{row.nama}</TableCell>
+				<TableCell className="border">{row.jabatan}</TableCell>
+				<TableCell className="border">{row.organisasi}</TableCell>
+				<TableCell className="border" align="center">
+					<Badge variant={"outline"}>{row.status_pegawai}</Badge>
+				</TableCell>
+				<TableCell className="border" align="right">
+					{formatRupiah(row.nominal)}
+				</TableCell>
+			</TableRow>
+		);
+	},
+);
 TunkinTableRow.displayName = "TunkinTableRow";
 
 // Table Header Component

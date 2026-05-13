@@ -20,28 +20,27 @@ Docker: `docker compose up --build` runs the app on host port 3003 → container
 
 ## Architecture
 
-Next.js 16 App Router + React 19 + TypeScript. Path alias `@/*` → `src/*`.
+Next.js 16.2.2 App Router + React 19 + TypeScript. Path alias `@/*` → `src/*`.
 
 ### Auth & request flow
 
-The app authenticates against an external API (`NEXT_PUBLIC_API_URL`) using OAuth2 password grant. JWTs live in **httpOnly cookies** (`access_token`, `refresh_token`), not in client state.
+The app authenticates against an external API (`NEXT_PUBLIC_API_URL`) using OAuth2 password grant. JWTs live in **httpOnly cookies** (`access_token`, `refresh_token`).
 
-- `src/proxy.ts` is the Next **middleware** (its `config.matcher` export wires it in; the filename `proxy` is project-specific, not framework-magic). On every request it reads cookies via `getSession()`, redirects unauthenticated users to `/login`, and silently refreshes an expired access token via `POST {API}/refresh` before continuing.
-- `src/lib/session.ts` owns all cookie I/O — `getSession`, `createSession`, `destroySession`, plus `decodeToken`/`getExpToken` which read JWT `exp` (in seconds, multiplied by 1000) to set the cookie expiry. **All session helpers are server-only** (`import "server-only"`). Anything that needs the user identity calls `getUser()` which decodes the access token.
-- `src/lib/auth.ts` exposes `renewToken` and `logout` as server actions; both redirect on failure.
-- `src/app/login/action.ts` (`doLogin`) is the server action that exchanges credentials for tokens and calls `createSession`.
-
-Pages that need the user (e.g. `src/app/dashboard/template.tsx`) call `getUser()` directly in a server component and redirect to `/login` if it returns null. **Do not duplicate this auth check in client components** — middleware + the server `template.tsx` already gate access.
+- `src/proxy.ts` is the Next **middleware** (named export `proxy`). It acts as an **optimistic gatekeeper**, checking for session existence in cookies without network calls. It redirects unauthenticated users to `/login`.
+- `src/lib/session.ts` owns cookie I/O and JWT decoding (sync, no network). It exports `currentSession`, `signIn`, `signOut`, and `writeTokens`. It uses `Buffer` for Node.js compatibility in the `proxy` runtime.
+- `src/lib/api.ts` is the **centralized HTTP client**. It handles `baseUrl`, `Authorization` headers, and **automatic token refresh** via `ensureFreshToken`. It exports `apiFetch`, `rawFetch`, and `ApiError`.
+- `src/lib/dal.ts` (Data Access Layer) provides the `requireUser` helper for Page components and Server Actions, ensuring authenticated access and returning user data.
+- `src/lib/auth.ts` only exposes the user-facing `logout` server action.
 
 ### Data fetching pattern
 
-Server actions in `src/app/<route>/action.ts` and `src/action/server/*.ts` are the only place that talks to the backend API. They:
+Server actions in `src/app/<route>/action.ts` and `src/action/server/*.ts` use `apiFetch` or `rawFetch`.
 
-1. Read the bearer token with `getAccessToken()` (server-only).
-2. Call `fetch(\`${appConfig.apiUrl}/...\`)` with `Authorization: Bearer`.
-3. Return `result.data` (the API wraps responses in `BaseResponse<T>` / `PageResponse<T>` — see `src/tipes/commons.ts`).
+1. `apiFetch<T>(path, init?)` is the default for authorized requests. It automatically adds the Bearer token, handles refresh-on-expiry, serializes plain object bodies to JSON, and unwraps `result.data`.
+2. `rawFetch<T>(path, init?)` is used for pre-login endpoints (e.g., `/token`).
+3. Both throw `ApiError` on non-OK responses, which contains the original response body for error handling.
 
-Client components consume these via TanStack Query (`@tanstack/react-query`). The `QueryClient` is instantiated once in `src/app/template.tsx` and provided through `src/components/template/query-provider.tsx`. `refetchOnWindowFocus` is disabled globally.
+Client components consume actions via TanStack Query. The `QueryClient` is provided through `src/components/template/query-provider.tsx`.
 
 ### URL-as-state filter pattern
 
@@ -52,46 +51,41 @@ The dashboard's filters and pagination live in **URL search params**, not React 
 - Debounces writes by 400ms via `useDebounceCallback`.
 - **Resets pagination (`page`, `size`) whenever any non-pagination filter changes.**
 
-`TunkinComponent` then keys its React Query call on `params.toString()`, so URL changes automatically refetch. When adding new filters, extend `FILTER_FIELDS` in this hook rather than introducing parallel state.
-
-The required `periode` param (format `YYYYMM`) is defaulted by `src/app/dashboard/page.tsx` via a server-side redirect when missing.
+`TunkinComponent` then keys its React Query call on `params.toString()`, so URL changes automatically refetch.
 
 ### Upload flow (form + confirmation)
 
 `src/hooks/upload-hook.ts` (`useTunkinFormDialog`) orchestrates the upload:
 
-1. `react-hook-form` + `zodResolver` against `UploadTunkinSchema` (`src/tipes/tunkin.ts`) — enforces 10 MB max, xlsx/xls MIME types.
+1. `react-hook-form` + `zodResolver` against `UploadTunkinSchema` (`src/tipes/tunkin.ts`).
 2. On submit, first calls `cekExistingTunkin(periode)` server action.
 3. If the period already exists, prompts the user with `window.confirm` before calling `doUpload`.
 4. On success, invalidates the `["tunkin", params.toString()]` query so the table refetches.
 
-Mirror this "check-then-confirm-then-mutate" pattern for any other destructive mutations.
-
 ### Component layout
 
-- `src/components/ui/*` — shadcn/ui (style: `new-york`, lucide icons, configured in `components.json`). Treat these as vendored primitives; modify with care.
-- `src/components/template/*` — app shell (sidebar, header, theme, providers). `AppTemplate` wires `SidebarProvider` + `TemplateSidebar` + `TemplateHeader`.
-- `src/components/form/*` — Zod-bound form fields (`InputZod`, `BulanZod`, `TahunZod`, `InputFileZod`) used with `react-hook-form`.
-- `src/components/dashboard/*` — filter pieces (`FilterBadge`, `FilterFields`, `ActiveFilters`) extracted from the main filter component.
-- `src/components/commons/*` — `LoadingTable`, `PaginationBuilder` (consumes `PageResponse<T>` from `commons.ts`).
+- `src/components/ui/*` — shadcn/ui primitives.
+- `src/components/template/*` — app shell (sidebar, header, theme, providers).
+- `src/components/form/*` — Zod-bound form fields used with `react-hook-form`.
+- `src/components/dashboard/*` — extracted filter sub-components.
+- `src/components/commons/*` — `LoadingTable`, `PaginationBuilder`.
 
 ### Naming quirks
 
-- `src/tipes/` (not `types/`) holds all shared TypeScript types and Zod schemas. Indonesian word, used throughout — don't "fix" it.
-- `src/proxy.ts` is the Next middleware. Renaming it would break the matcher wiring; convention is documented here so future readers don't search for `middleware.ts`.
-- Comments and user-facing copy are in Indonesian (`id` is the default locale in `i18n-config.ts`). Preserve the existing language when editing strings.
+- `src/tipes/` (not `types/`) holds all shared TypeScript types and Zod schemas.
+- `src/proxy.ts` is the Next 16 middleware convention (replaces `middleware.ts`).
+- Indonesian copy/comments are standard.
 
 ### Env vars
 
 Read from `process.env` in `src/lib/utils.ts` (`appConfig`):
 
-- `NEXT_PUBLIC_API_URL` — backend base URL
-- `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_CLIENT_SECRET` — OAuth2 client creds (sent in form body to `/token`)
-- `DEFAULT_TIMEZONE=Asia/Jakarta` — pinned in `next.config.ts`
+- `NEXT_PUBLIC_API_URL`
+- `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_CLIENT_SECRET`
 
 ## Graphify
 
-`graphify-out/` exists at the repo root. Per the user's global rules, prefer the graphify MCP tools (`mcp_graphify_god_nodes`, `mcp_graphify_query_graph`, `mcp_graphify_shortest_path`) over recursive `grep`/`ls` when exploring. Re-run `graphify update .` after non-trivial code changes.
+`graphify-out/` exists at the repo root. Re-run `graphify update .` after non-trivial code changes.
 
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:ca08a54f -->
