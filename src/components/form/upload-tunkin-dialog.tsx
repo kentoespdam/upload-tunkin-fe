@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { memo, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { ZodField } from "@/components/form/zod-field";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -30,10 +31,8 @@ import {
 import { FieldGroup } from "@/components/ui/field";
 import { Form } from "@/components/ui/form";
 import { useUploadTunkin } from "@/hooks/use-upload-tunkin";
+import { BULAN_OPTIONS, TAHUN_OPTIONS } from "@/tipes/options";
 import { UploadTunkinSchema } from "@/tipes/tunkin";
-import BulanZod from "./bulan-zod";
-import InputFileZod from "./file-zod";
-import TahunZod from "./tahun-zod";
 
 export const UploadTunkinDialog = memo(() => {
 	const router = useRouter();
@@ -114,12 +113,25 @@ export const UploadTunkinDialog = memo(() => {
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 							<FieldGroup>
-								<TahunZod id="tahun" form={form} />
-								<BulanZod id="bulan" form={form} />
-								<InputFileZod
+								<ZodField
+									id="tahun"
+									form={form}
+									label="Tahun"
+									variant="select"
+									options={TAHUN_OPTIONS}
+								/>
+								<ZodField
+									id="bulan"
+									form={form}
+									label="Bulan"
+									variant="select"
+									options={BULAN_OPTIONS}
+								/>
+								<ZodField
 									id="file"
 									form={form}
 									label="File Tunkin"
+									variant="file"
 									accept=".xlsx,.xls"
 								/>
 							</FieldGroup>

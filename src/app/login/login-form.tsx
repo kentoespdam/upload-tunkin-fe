@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { type UseFormReturn, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import InputZod from "@/components/form/input-zod";
+import { ZodField } from "@/components/form/zod-field";
 import { Button } from "@/components/ui/button";
 import LoadingButtonClient from "@/components/ui/button-loading";
 import {
@@ -34,11 +34,12 @@ const FormContent = ({
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onsubmit)} className="space-y-8">
 				<FieldGroup>
-					<InputZod id="username" form={form} label="Username" />
-					<InputZod
+					<ZodField id="username" form={form} label="Username" variant="text" />
+					<ZodField
 						id="password"
 						form={form}
 						label="Password"
+						variant="text"
 						inputType="password"
 					/>
 				</FieldGroup>
