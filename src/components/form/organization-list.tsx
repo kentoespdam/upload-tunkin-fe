@@ -1,9 +1,7 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { CheckIcon, ChevronDownIcon, Loader2Icon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { fetchOrganization } from "@/action/server/organization";
 import {
 	CommandDialog,
 	CommandEmpty,
@@ -14,11 +12,11 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import type { OrganizationMini } from "@/tipes/organization";
-import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 type OrganizationProps = {
 	id: string;
+	orgs: OrganizationMini[];
 	defaultValue?: string;
 	onChange: (id: string, value: string) => void;
 	className?: string;
@@ -29,21 +27,7 @@ type OrganizationProps = {
 	required?: boolean;
 };
 
-// 1. Memoize komponen Loading Skeleton untuk performa
-const LoadingSkeleton = memo(() => (
-	<div className="space-y-2 p-4">
-		{Array.from({ length: 5 }).map((_, i) => (
-			<div
-				key={crypto.randomUUID()}
-				className="h-10 w-full animate-pulse rounded-md bg-muted"
-				style={{ animationDelay: `${i * 100}ms` }}
-			/>
-		))}
-	</div>
-));
-LoadingSkeleton.displayName = "LoadingSkeleton";
-
-// 2. Memoize Empty State dengan animasi
+// 1. Memoize Empty State dengan animasi
 const EmptyState = memo(
 	({ message, hasSearch }: { message: string; hasSearch: boolean }) => (
 		<div className="flex flex-col items-center justify-center p-6 text-center">
@@ -66,6 +50,7 @@ EmptyState.displayName = "EmptyState";
 const OrganizationList = memo(
 	({
 		id,
+		orgs,
 		defaultValue,
 		onChange,
 		className = "",
@@ -75,56 +60,38 @@ const OrganizationList = memo(
 		label,
 		required = false,
 	}: OrganizationProps) => {
-		// 3. Optimasi query dengan proper caching
-		const {
-			data,
-			isLoading,
-			isFetching,
-			error: queryError,
-			refetch,
-		} = useQuery<OrganizationMini[]>({
-			queryKey: ["organization"],
-			queryFn: async () => await fetchOrganization(),
-			staleTime: 10 * 60 * 1000, // 10 minutes
-			gcTime: 30 * 60 * 1000, // 30 minutes (TanStack Query v5)
-			retry: 2,
-			retryDelay: 1000,
-		});
-
 		const [open, setOpen] = useState(false);
 		const [searchQuery, setSearchQuery] = useState("");
 		const [selectedValue, setSelectedValue] = useState(defaultValue || "");
 		const inputRef = useRef<HTMLInputElement>(null);
 		const [isInputFocused, setIsInputFocused] = useState(false);
 
-		// 4. Filter data dengan useMemo untuk performa
+		// 2. Filter data dengan useMemo untuk performa
 		const filteredData = useMemo(() => {
-			if (!data) return [];
-			if (!searchQuery.trim()) return data;
+			if (!orgs) return [];
+			if (!searchQuery.trim()) return orgs;
 
 			const query = searchQuery.toLowerCase();
-			return data.filter(
+			return orgs.filter(
 				(item) =>
 					item.org_name.toLowerCase().includes(query) ||
 					item.org_id.toLowerCase().includes(query),
 			);
-		}, [data, searchQuery]);
+		}, [orgs, searchQuery]);
 
-		// 5. Selected organization info dengan useMemo
+		// 3. Selected organization info dengan useMemo
 		const selectedOrg = useMemo(() => {
-			if (!data) return null;
-			return data.find((item) => item.org_id === selectedValue) || null;
-		}, [data, selectedValue]);
+			if (!orgs) return null;
+			return orgs.find((item) => item.org_id === selectedValue) || null;
+		}, [orgs, selectedValue]);
 
-		// 6. Placeholder text dengan useMemo
+		// 4. Placeholder text dengan useMemo
 		const displayPlaceholder = useMemo(() => {
-			if (isLoading) return "Loading organizations...";
-			if (queryError) return "Error loading data";
-			if (!data || data.length === 0) return "No organizations available";
+			if (!orgs || orgs.length === 0) return "No organizations available";
 			return placeholder;
-		}, [isLoading, queryError, data, placeholder]);
+		}, [orgs, placeholder]);
 
-		// 7. Event handlers dengan useCallback
+		// 5. Event handlers dengan useCallback
 		const handleOpenChange = useCallback(
 			(isOpen: boolean) => {
 				if (disabled) return;
@@ -165,26 +132,23 @@ const OrganizationList = memo(
 			[disabled, open],
 		);
 
-		// 8. Effect untuk sync dengan defaultValue eksternal
+		// 6. Effect untuk sync dengan defaultValue eksternal
 		useEffect(() => {
 			if (defaultValue !== undefined) {
 				setSelectedValue(defaultValue);
 			}
 		}, [defaultValue]);
 
-		// 9. Reset input value ketika selectedOrg berubah
+		// 7. Reset input value ketika selectedOrg berubah
 		useEffect(() => {
 			if (inputRef.current) {
 				inputRef.current.value = selectedOrg?.org_name || "";
 			}
 		}, [selectedOrg]);
 
-		// 10. Status loading
-		const showLoading = isLoading || isFetching;
-
 		return (
 			<div className={cn("space-y-2", className)}>
-				{/* 11. Label dengan styling yang baik */}
+				{/* 8. Label dengan styling yang baik */}
 				{label && (
 					<label
 						htmlFor={id}
@@ -198,7 +162,7 @@ const OrganizationList = memo(
 					</label>
 				)}
 
-				{/* 12. Input dengan animasi focus */}
+				{/* 9. Input dengan animasi focus */}
 				<div className="relative">
 					<Input
 						ref={inputRef}
@@ -229,22 +193,18 @@ const OrganizationList = memo(
 						aria-describedby={error ? `${id}-error` : undefined}
 					/>
 
-					{/* 13. Icon dengan animasi */}
+					{/* 10. Icon dengan animasi */}
 					<div className="absolute right-3 top-1/2 -translate-y-1/2">
-						{showLoading ? (
-							<Loader2Icon className="h-4 w-4 animate-spin text-muted-foreground" />
-						) : (
-							<ChevronDownIcon
-								className={cn(
-									"h-4 w-4 text-muted-foreground transition-transform duration-200",
-									open && "rotate-180 text-primary",
-								)}
-							/>
-						)}
+						<ChevronDownIcon
+							className={cn(
+								"h-4 w-4 text-muted-foreground transition-transform duration-200",
+								open && "rotate-180 text-primary",
+							)}
+						/>
 					</div>
 				</div>
 
-				{/* 14. Error message dengan animasi */}
+				{/* 11. Error message dengan animasi */}
 				{error && (
 					<p
 						id={`${id}-error`}
@@ -254,25 +214,9 @@ const OrganizationList = memo(
 					</p>
 				)}
 
-				{/* 15. Query error message */}
-				{queryError && !error && (
-					<div className="rounded-md bg-destructive/10 p-3">
-						<p className="text-sm text-destructive">
-							Failed to load organizations.{" "}
-							<Button
-								variant="link"
-								className="h-auto p-0 text-sm underline"
-								onClick={() => refetch()}
-							>
-								Try again
-							</Button>
-						</p>
-					</div>
-				)}
-
-				{/* 16. Command Dialog dengan custom styling */}
+				{/* 12. Command Dialog dengan custom styling */}
 				<CommandDialog open={open} onOpenChange={handleOpenChange}>
-					{/* 17. Header dengan animasi */}
+					{/* 13. Header dengan animasi */}
 					<div className="border-b px-4 py-3">
 						<h3 className="font-semibold text-lg">Select Organization</h3>
 						<p className="text-sm text-muted-foreground">Search by name</p>
@@ -287,18 +231,7 @@ const OrganizationList = memo(
 					/>
 
 					<CommandList className="max-h-[350px]">
-						{showLoading ? (
-							<LoadingSkeleton />
-						) : queryError ? (
-							<CommandEmpty>
-								<div className="p-6 text-center">
-									<p className="text-destructive mb-2">Failed to load data</p>
-									<Button size="sm" variant="outline" onClick={() => refetch()}>
-										Retry
-									</Button>
-								</div>
-							</CommandEmpty>
-						) : filteredData.length === 0 ? (
+						{filteredData.length === 0 ? (
 							<CommandEmpty>
 								<EmptyState
 									message="No organizations available"
@@ -322,7 +255,7 @@ const OrganizationList = memo(
 										)}
 									>
 										<div className="flex flex-1 items-center gap-3">
-											{/* 18. Organization avatar/icon */}
+											{/* 14. Organization avatar/icon */}
 											<div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10">
 												<span className="text-xs font-medium text-primary">
 													{org.org_name.charAt(0).toUpperCase()}
@@ -336,7 +269,7 @@ const OrganizationList = memo(
 											</div>
 										</div>
 
-										{/* 19. Checkmark untuk selected item */}
+										{/* 15. Checkmark untuk selected item */}
 										{selectedValue === org.org_id && (
 											<CheckIcon className="h-4 w-4 text-primary ml-2 shrink-0 animate-in fade-in-0 zoom-in-50 duration-200" />
 										)}
@@ -346,8 +279,8 @@ const OrganizationList = memo(
 						)}
 					</CommandList>
 
-					{/* 20. Footer dengan count */}
-					{!showLoading && !queryError && filteredData.length > 0 && (
+					{/* 16. Footer dengan count */}
+					{filteredData.length > 0 && (
 						<div className="border-t px-4 py-2 text-xs text-muted-foreground">
 							<div className="flex items-center justify-between">
 								<span>{filteredData.length} organization(s)</span>
@@ -364,9 +297,10 @@ const OrganizationList = memo(
 		);
 	},
 	(prevProps, nextProps) => {
-		// 21. Custom memo comparison
+		// 17. Custom memo comparison
 		return (
 			prevProps.id === nextProps.id &&
+			prevProps.orgs === nextProps.orgs &&
 			prevProps.defaultValue === nextProps.defaultValue &&
 			prevProps.className === nextProps.className &&
 			prevProps.placeholder === nextProps.placeholder &&

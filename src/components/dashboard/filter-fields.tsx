@@ -87,7 +87,6 @@ export const FilterFields = memo(
 							id="orgId"
 							onChange={onSelectChange}
 							defaultValue={orgId}
-							// @ts-expect-error - orgs prop will be added in Step 4
 							orgs={orgs}
 							placeholder="Pilih organisasi"
 						/>
