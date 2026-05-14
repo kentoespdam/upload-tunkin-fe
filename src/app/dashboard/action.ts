@@ -1,8 +1,8 @@
 "use server";
 
-import { ApiError, apiFetch } from "@/lib/api";
+import { apiFetch, safeAction } from "@/lib/api";
 import { requireUser } from "@/lib/dal";
-import type { BaseResponse, PageResponse } from "@/tipes/commons";
+import type { PageResponse } from "@/tipes/commons";
 import type { Tunkin } from "@/tipes/tunkin";
 
 export const fetchTunkin = async (
@@ -23,33 +23,11 @@ export const cekExistingTunkin = async (
 	return apiFetch<{ is_exist: boolean }>(`/tunkin/exists/${periode}`);
 };
 
-export const doUpload = async (
-	formData: FormData,
-): Promise<BaseResponse<unknown>> => {
-	try {
-		const result = await apiFetch<unknown>("/tunkin/upload", {
+export const doUpload = async (formData: FormData) => {
+	return safeAction(() =>
+		apiFetch<unknown>("/tunkin/upload", {
 			method: "POST",
 			body: formData,
-		});
-
-		return {
-			data: result,
-			status: 200,
-			message: "Upload successful",
-			timestamp: new Date().toISOString(),
-			request_id: "local",
-		};
-	} catch (error) {
-		if (error instanceof ApiError) {
-			return error.body as BaseResponse<unknown>;
-		}
-		return {
-			status: 500,
-			data: null,
-			errors: ["Network error during upload"],
-			message: "Network error",
-			timestamp: new Date().toISOString(),
-			request_id: "local",
-		};
-	}
+		}),
+	);
 };

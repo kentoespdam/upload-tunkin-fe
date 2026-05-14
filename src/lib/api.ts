@@ -1,4 +1,5 @@
 import "server-only";
+import { isRedirectError } from "next/dist/client/components/redirect";
 import { redirect } from "next/navigation";
 import type { LoginToken } from "@/tipes/auth";
 import type { BaseResponse } from "@/tipes/commons";
@@ -13,6 +14,44 @@ export class ApiError extends Error {
 	) {
 		super(message || `API Error: ${status}`);
 		this.name = "ApiError";
+	}
+}
+
+export type ActionResult<T> =
+	| { ok: true; data: T }
+	| { ok: false; status: number; message: string; errors?: string[] };
+
+/**
+ * Wraps a server action function to handle errors and redirects safely.
+ * Rethrows NEXT_REDIRECT errors so Next.js can handle them.
+ */
+export async function safeAction<T>(
+	fn: () => Promise<T>,
+): Promise<ActionResult<T>> {
+	try {
+		const data = await fn();
+		return { ok: true, data };
+	} catch (error) {
+		if (isRedirectError(error)) {
+			throw error;
+		}
+
+		if (error instanceof ApiError) {
+			const body = error.body as BaseResponse<unknown>;
+			return {
+				ok: false,
+				status: error.status,
+				message: error.message,
+				errors: body?.errors,
+			};
+		}
+
+		console.error("Action failed:", error);
+		return {
+			ok: false,
+			status: 500,
+			message: error instanceof Error ? error.message : "Internal Server Error",
+		};
 	}
 }
 
