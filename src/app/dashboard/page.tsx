@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import TunkinComponent from "./component";
-import TunkinFilterComponent from "./filter";
 import { apiFetch } from "@/lib/api";
 import type { OrganizationMini } from "@/tipes/organization";
+import TunkinComponent from "./component";
+import TunkinFilterComponent from "./filter";
 
 const currentPeriode = () => {
 	const now = new Date();
@@ -29,7 +29,6 @@ const DashboardPage = async ({
 		<div className="grid">
 			<TunkinFilterComponent orgs={orgs} />
 			<Suspense fallback={<div>Loading...</div>}>
-				{/* @ts-expect-error - orgs prop will be added in Step 3 */}
 				<TunkinComponent orgs={orgs} />
 			</Suspense>
 		</div>

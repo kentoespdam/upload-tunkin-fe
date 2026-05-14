@@ -19,15 +19,17 @@ import {
 import { FieldGroup } from "@/components/ui/field";
 import { Form } from "@/components/ui/form";
 import { useTunkinFormDialog } from "@/hooks/upload-hook";
+import type { OrganizationMini } from "@/tipes/organization";
 import type { UploadTunkinSchema } from "@/tipes/tunkin";
 
 type FormComponentProps = {
 	form: UseFormReturn<UploadTunkinSchema>;
 	onSubmit: (value: UploadTunkinSchema) => void;
 	isPending: boolean;
+	orgs: OrganizationMini[];
 };
 const FormComponent = memo(
-	({ form, onSubmit, isPending }: FormComponentProps) => {
+	({ form, onSubmit, isPending, orgs: _orgs }: FormComponentProps) => {
 		// const { form, onSubmit, isPending } = useTunkinFormDialog();
 
 		return (
@@ -65,7 +67,7 @@ const FormComponent = memo(
 );
 FormComponent.displayName = "FormComponent";
 
-const TunkinFormDialog = memo(() => {
+const TunkinFormDialog = memo(({ orgs }: { orgs: OrganizationMini[] }) => {
 	const { isDialogOpen, handleOpenChange, form, onSubmit, isPending } =
 		useTunkinFormDialog();
 
@@ -81,7 +83,12 @@ const TunkinFormDialog = memo(() => {
 				<DialogHeader>
 					<DialogTitle>Form Upload Tunkin</DialogTitle>
 				</DialogHeader>
-				<FormComponent form={form} onSubmit={onSubmit} isPending={isPending} />
+				<FormComponent
+					form={form}
+					onSubmit={onSubmit}
+					isPending={isPending}
+					orgs={orgs}
+				/>
 			</DialogContent>
 		</Dialog>
 	);

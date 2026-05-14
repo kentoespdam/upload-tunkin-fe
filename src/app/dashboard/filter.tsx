@@ -7,8 +7,8 @@ import FilterFields from "@/components/dashboard/filter-fields";
 import { Button } from "@/components/ui/button";
 import { useTunkinFilter } from "@/hooks/use-tunkin-filter";
 import { cn } from "@/lib/utils";
-import TunkinFormDialog from "./form-dialog";
 import type { OrganizationMini } from "@/tipes/organization";
+import TunkinFormDialog from "./form-dialog";
 
 interface TunkinFilterProps {
 	orgs: OrganizationMini[];
@@ -95,7 +95,7 @@ const TunkinFilterComponent = ({ orgs }: TunkinFilterProps) => {
 								</Button>
 							</div>
 						)}
-						<TunkinFormDialog />
+						<TunkinFormDialog orgs={orgs} />
 					</div>
 				</div>
 

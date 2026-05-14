@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { cn, formatRupiah, getUrut } from "@/lib/utils";
 import type { PageResponse } from "@/tipes/commons";
+import type { OrganizationMini } from "@/tipes/organization";
 import { type Tunkin, tunkinTableHeders } from "@/tipes/tunkin";
 import { fetchTunkin } from "./action";
 
@@ -123,56 +124,58 @@ const TunkinTableHeader = memo(() => {
 TunkinTableHeader.displayName = "TunkinTableHeader";
 
 // Main Component
-const TunkinComponent = memo(() => {
-	const { data, isLoading, isFetching } = useTunkinData();
+const TunkinComponent = memo(
+	({ orgs: _orgs }: { orgs: OrganizationMini[] }) => {
+		const { data, isLoading, isFetching } = useTunkinData();
 
-	const showLoading = isLoading || isFetching;
-	const isDataEmpty = !data || data.is_empty;
+		const showLoading = isLoading || isFetching;
+		const isDataEmpty = !data || data.is_empty;
 
-	// Presence-managed mount/unmount crossfade between loading and data views
-	const PRESENCE_EXIT_MS = 180;
-	const [currentView, setCurrentView] = useState<"loading" | "data">(
-		isDataEmpty ? "loading" : "data",
-	);
-	const [isSwapping, setIsSwapping] = useState(false);
+		// Presence-managed mount/unmount crossfade between loading and data views
+		const PRESENCE_EXIT_MS = 180;
+		const [currentView, setCurrentView] = useState<"loading" | "data">(
+			isDataEmpty ? "loading" : "data",
+		);
+		const [isSwapping, setIsSwapping] = useState(false);
 
-	useEffect(() => {
-		const nextView = isDataEmpty ? "loading" : "data";
-		if (nextView !== currentView) {
-			setIsSwapping(true);
-			const t = setTimeout(() => {
-				setCurrentView(nextView);
-				setIsSwapping(false);
-			}, PRESENCE_EXIT_MS);
-			return () => clearTimeout(t);
-		}
-	}, [isDataEmpty, currentView]);
+		useEffect(() => {
+			const nextView = isDataEmpty ? "loading" : "data";
+			if (nextView !== currentView) {
+				setIsSwapping(true);
+				const t = setTimeout(() => {
+					setCurrentView(nextView);
+					setIsSwapping(false);
+				}, PRESENCE_EXIT_MS);
+				return () => clearTimeout(t);
+			}
+		}, [isDataEmpty, currentView]);
 
-	return (
-		<div className="grid gap-2">
-			<div className="overflow-auto" style={{ minHeight: TABLE_MIN_HEIGHT }}>
-				<Table className="border animate-table-mount">
-					<TunkinTableHeader />
+		return (
+			<div className="grid gap-2">
+				<div className="overflow-auto" style={{ minHeight: TABLE_MIN_HEIGHT }}>
+					<Table className="border animate-table-mount">
+						<TunkinTableHeader />
 
-					{currentView === "data" ? (
-						<TunkinTableBody
-							data={data as PageResponse<Tunkin>}
-							className={cn(isSwapping ? "presence-exit" : "presence-enter")}
-						/>
-					) : (
-						<LoadingTable
-							columns={tunkinTableHeders}
-							showLoading={showLoading}
-							className={cn(isSwapping ? "presence-exit" : "presence-enter")}
-						/>
-					)}
-				</Table>
+						{currentView === "data" ? (
+							<TunkinTableBody
+								data={data as PageResponse<Tunkin>}
+								className={cn(isSwapping ? "presence-exit" : "presence-enter")}
+							/>
+						) : (
+							<LoadingTable
+								columns={tunkinTableHeders}
+								showLoading={showLoading}
+								className={cn(isSwapping ? "presence-exit" : "presence-enter")}
+							/>
+						)}
+					</Table>
+				</div>
+
+				<PaginationBuilder data={data} />
 			</div>
-
-			<PaginationBuilder data={data} />
-		</div>
-	);
-});
+		);
+	},
+);
 
 TunkinComponent.displayName = "TunkinComponent";
 
