@@ -27,7 +27,6 @@ const DashboardPage = async ({
 
 	return (
 		<div className="grid">
-			{/* @ts-expect-error - orgs prop will be added in Step 2 */}
 			<TunkinFilterComponent orgs={orgs} />
 			<Suspense fallback={<div>Loading...</div>}>
 				{/* @ts-expect-error - orgs prop will be added in Step 3 */}

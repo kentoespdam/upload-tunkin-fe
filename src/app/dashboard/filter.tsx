@@ -8,8 +8,13 @@ import { Button } from "@/components/ui/button";
 import { useTunkinFilter } from "@/hooks/use-tunkin-filter";
 import { cn } from "@/lib/utils";
 import TunkinFormDialog from "./form-dialog";
+import type { OrganizationMini } from "@/tipes/organization";
 
-const TunkinFilterComponent = () => {
+interface TunkinFilterProps {
+	orgs: OrganizationMini[];
+}
+
+const TunkinFilterComponent = ({ orgs }: TunkinFilterProps) => {
 	const {
 		periode,
 		nipam,
@@ -109,6 +114,7 @@ const TunkinFilterComponent = () => {
 							nipam={nipam}
 							nama={nama}
 							orgId={orgId}
+							orgs={orgs}
 							onInputChange={handleInputChange}
 							onSelectChange={handleSelectChange}
 						/>

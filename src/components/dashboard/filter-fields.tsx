@@ -4,12 +4,14 @@ import OrganizationList from "@/components/form/organization-list";
 import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { OrganizationMini } from "@/tipes/organization";
 
 interface FilterFieldsProps {
 	periode: string;
 	nipam: string;
 	nama: string;
 	orgId: string;
+	orgs: OrganizationMini[];
 	onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onSelectChange: (id: string, value: string) => void;
 }
@@ -47,6 +49,7 @@ export const FilterFields = memo(
 		nipam,
 		nama,
 		orgId,
+		orgs,
 		onInputChange,
 		onSelectChange,
 	}: FilterFieldsProps) => {
@@ -84,6 +87,8 @@ export const FilterFields = memo(
 							id="orgId"
 							onChange={onSelectChange}
 							defaultValue={orgId}
+							// @ts-expect-error - orgs prop will be added in Step 4
+							orgs={orgs}
 							placeholder="Pilih organisasi"
 						/>
 					</Field>
