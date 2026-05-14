@@ -1,6 +1,7 @@
 "use server";
 
 import { ApiError, apiFetch } from "@/lib/api";
+import { requireUser } from "@/lib/dal";
 import type { BaseResponse, PageResponse } from "@/tipes/commons";
 import type { Tunkin } from "@/tipes/tunkin";
 
@@ -18,6 +19,7 @@ export const fetchTunkin = async (
 export const cekExistingTunkin = async (
 	periode: string,
 ): Promise<{ is_exist: boolean }> => {
+	await requireUser();
 	return apiFetch<{ is_exist: boolean }>(`/tunkin/exists/${periode}`);
 };
 
