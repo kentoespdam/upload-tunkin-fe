@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import TunkinComponent from "./component";
 import TunkinFilterComponent from "./filter";
+import { apiFetch } from "@/lib/api";
+import type { OrganizationMini } from "@/tipes/organization";
 
 const currentPeriode = () => {
 	const now = new Date();
@@ -21,11 +23,15 @@ const DashboardPage = async ({
 		return redirect(`/dashboard?periode=${defaultPeriode}`);
 	}
 
+	const orgs = await apiFetch<OrganizationMini[]>("/organization/list");
+
 	return (
 		<div className="grid">
-			<TunkinFilterComponent />
+			{/* @ts-expect-error - orgs prop will be added in Step 2 */}
+			<TunkinFilterComponent orgs={orgs} />
 			<Suspense fallback={<div>Loading...</div>}>
-				<TunkinComponent />
+				{/* @ts-expect-error - orgs prop will be added in Step 3 */}
+				<TunkinComponent orgs={orgs} />
 			</Suspense>
 		</div>
 	);
