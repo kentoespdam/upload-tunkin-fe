@@ -51,12 +51,12 @@ Real seams (≥2 adapters or distinct invariant per layer). Do not merge.
 
 - `react-hook-form` + `zodResolver`. Schemas in `src/tipes/*.ts`.
 - Field wrappers in `src/components/form/*` (`InputZod`, `BulanZod`, `TahunZod`, `InputFileZod`) — currently 4 shallow Controllers, candidate for consolidation into one `ZodField`.
-- **Upload + confirm flow** (`src/hooks/upload-hook.ts`):
-  1. Validate via Zod.
-  2. Probe `cekExistingTunkin(periode)`.
-  3. If exists → `window.confirm` overwrite prompt.
+- **Upload + confirm flow** (`src/hooks/upload-hook.ts` → being deepened into `useUploadTunkin` + `<UploadTunkinDialog>`, see bead `pkn`):
+  1. Validate via Zod (in wrapper component).
+  2. Probe `cekExistingTunkin(periode)`. **Probe failure is blocking** — surface toast, do not fall through to upload (Probe is a guardrail; if it's broken, treat the world as unknown). Tracked race with BE in bead `z74`.
+  3. If `is_exist` → controlled `<AlertDialog>` overwrite-confirm (not `window.confirm`). Periode visible in dialog body.
   4. Submit `doUpload(formData)`.
-  5. On success → invalidate `["tunkin", params.toString()]`.
+  5. On success → wrapper invalidates `["tunkin", params.toString()]`. Hook itself is cache-agnostic.
 
 ## Naming quirks
 
