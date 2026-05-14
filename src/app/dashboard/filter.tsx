@@ -4,11 +4,11 @@ import { ChevronDown, ChevronUp, Filter, RotateCcw } from "lucide-react";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { ActiveFilters } from "@/components/dashboard/active-filters";
 import FilterFields from "@/components/dashboard/filter-fields";
+import UploadTunkinDialog from "@/components/form/upload-tunkin-dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { OrganizationMini } from "@/tipes/organization";
 import { useFilterContext } from "./filter-provider";
-import TunkinFormDialog from "./form-dialog";
 
 interface TunkinFilterProps {
 	orgs: OrganizationMini[];
@@ -95,7 +95,7 @@ const TunkinFilterComponent = ({ orgs }: TunkinFilterProps) => {
 								</Button>
 							</div>
 						)}
-						<TunkinFormDialog orgs={orgs} />
+						<UploadTunkinDialog />
 					</div>
 				</div>
 
