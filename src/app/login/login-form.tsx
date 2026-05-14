@@ -18,8 +18,7 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Form } from "@/components/ui/form";
-import { LoginSchema, type LoginToken } from "@/tipes/auth";
-import type { BaseResponse } from "@/tipes/commons";
+import { LoginSchema } from "@/tipes/auth";
 import { doLogin } from "./action";
 
 const FormContent = ({
@@ -75,13 +74,16 @@ const LoginForm = () => {
 	});
 	const { mutate, isPending } = useMutation({
 		mutationFn: doLogin,
-		onSuccess: (data: BaseResponse<LoginToken>) => {
-			if (data.errors) throw data.errors;
-			toast.success(data.message);
+		onSuccess: (result) => {
+			if (!result.ok) {
+				toast.error(result.errors?.join("\n") || result.message);
+				return;
+			}
+			toast.success("Login successful");
 			push("/dashboard");
 		},
-		onError: (error: string[]) => {
-			toast.error(error.join("\n"));
+		onError: (error) => {
+			toast.error(error.message || "An unexpected error occurred");
 		},
 	});
 

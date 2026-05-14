@@ -1,7 +1,6 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
-import { memo, useEffect, useMemo, useState } from "react";
+
+import { memo, useMemo } from "react";
 import LoadingTable from "@/components/commons/loading-table";
 import PaginationBuilder from "@/components/commons/pageable";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +16,7 @@ import { cn, formatRupiah, getUrut } from "@/lib/utils";
 import type { PageResponse } from "@/tipes/commons";
 import type { OrganizationMini } from "@/tipes/organization";
 import { type Tunkin, tunkinTableHeders } from "@/tipes/tunkin";
-import { fetchTunkin } from "./action";
+import { useFilterContext } from "./filter-provider";
 
 // Types
 type TunkinTableBodyProps = {
@@ -31,27 +30,6 @@ type TunkinRow = Tunkin & { urut: number };
 // Constants
 const TABLE_MIN_HEIGHT = 411;
 const ROW_ANIM_DELAY_MS = 40;
-
-// Custom hook untuk data fetching
-const useTunkinData = () => {
-	const params = useSearchParams();
-	const paramsString = params.toString();
-
-	const { data, isLoading, isFetching } = useQuery({
-		queryKey: ["tunkin", paramsString],
-		queryFn: () => fetchTunkin(paramsString),
-		enabled: !!params.get("periode"),
-		staleTime: 5 * 60 * 1000, // 5 minutes
-		gcTime: 10 * 60 * 1000, // 10 minutes
-	});
-
-	return {
-		data,
-		isLoading,
-		isFetching,
-		paramsString,
-	};
-};
 
 // Table Body Component
 const TunkinTableBody = memo(
@@ -125,48 +103,32 @@ TunkinTableHeader.displayName = "TunkinTableHeader";
 
 // Main Component
 const TunkinComponent = memo(
-	({ orgs: _orgs }: { orgs: OrganizationMini[] }) => {
-		const { data, isLoading, isFetching } = useTunkinData();
-
-		const showLoading = isLoading || isFetching;
+	({
+		orgs: _orgs,
+		data,
+	}: {
+		orgs: OrganizationMini[];
+		data: PageResponse<Tunkin>;
+	}) => {
+		const { isPending } = useFilterContext();
 		const isDataEmpty = !data || data.is_empty;
-
-		// Presence-managed mount/unmount crossfade between loading and data views
-		const PRESENCE_EXIT_MS = 180;
-		const [currentView, setCurrentView] = useState<"loading" | "data">(
-			isDataEmpty ? "loading" : "data",
-		);
-		const [isSwapping, setIsSwapping] = useState(false);
-
-		useEffect(() => {
-			const nextView = isDataEmpty ? "loading" : "data";
-			if (nextView !== currentView) {
-				setIsSwapping(true);
-				const t = setTimeout(() => {
-					setCurrentView(nextView);
-					setIsSwapping(false);
-				}, PRESENCE_EXIT_MS);
-				return () => clearTimeout(t);
-			}
-		}, [isDataEmpty, currentView]);
 
 		return (
 			<div className="grid gap-2">
-				<div className="overflow-auto" style={{ minHeight: TABLE_MIN_HEIGHT }}>
+				<div
+					className={cn(
+						"overflow-auto relative transition-opacity duration-200",
+						isPending && "opacity-60 pointer-events-none",
+					)}
+					style={{ minHeight: TABLE_MIN_HEIGHT }}
+				>
 					<Table className="border animate-table-mount">
 						<TunkinTableHeader />
 
-						{currentView === "data" ? (
-							<TunkinTableBody
-								data={data as PageResponse<Tunkin>}
-								className={cn(isSwapping ? "presence-exit" : "presence-enter")}
-							/>
+						{isDataEmpty ? (
+							<LoadingTable columns={tunkinTableHeders} showLoading={false} />
 						) : (
-							<LoadingTable
-								columns={tunkinTableHeders}
-								showLoading={showLoading}
-								className={cn(isSwapping ? "presence-exit" : "presence-enter")}
-							/>
+							<TunkinTableBody data={data} />
 						)}
 					</Table>
 				</div>

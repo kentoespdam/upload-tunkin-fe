@@ -18,7 +18,9 @@ export interface FilterValues {
 	orgId: string;
 }
 
-export const useTunkinFilter = () => {
+export const useTunkinFilter = (
+	startTransition?: React.TransitionStartFunction,
+) => {
 	const params = useSearchParams();
 	const { replace } = useRouter();
 	const paramsRef = useRef(params);
@@ -57,9 +59,15 @@ export const useTunkinFilter = () => {
 				search.set(field, value);
 			}
 
-			replace(`?${search.toString()}`);
+			const update = () => replace(`?${search.toString()}`);
+
+			if (startTransition) {
+				startTransition(update);
+			} else {
+				update();
+			}
 		},
-		[replace],
+		[replace, startTransition],
 	);
 
 	const debounceSearch = useDebounceCallback(replaceUrl, 400);

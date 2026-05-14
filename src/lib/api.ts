@@ -1,5 +1,5 @@
 import "server-only";
-import { isRedirectError } from "next/dist/client/components/redirect";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { redirect } from "next/navigation";
 import type { LoginToken } from "@/tipes/auth";
 import type { BaseResponse } from "@/tipes/commons";
@@ -38,11 +38,15 @@ export async function safeAction<T>(
 
 		if (error instanceof ApiError) {
 			const body = error.body as BaseResponse<unknown>;
+			let errors: string[] | undefined;
+			if (body?.errors) {
+				errors = Array.isArray(body.errors) ? body.errors : [body.errors];
+			}
 			return {
 				ok: false,
 				status: error.status,
 				message: error.message,
-				errors: body?.errors,
+				errors,
 			};
 		}
 

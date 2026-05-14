@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
 import { apiFetch } from "@/lib/api";
+import type { PageResponse } from "@/tipes/commons";
 import type { OrganizationMini } from "@/tipes/organization";
+import type { Tunkin } from "@/tipes/tunkin";
 import TunkinComponent from "./component";
 import TunkinFilterComponent from "./filter";
+import { DashboardFilterProvider } from "./filter-provider";
 
 const currentPeriode = () => {
 	const now = new Date();
@@ -17,21 +19,30 @@ const DashboardPage = async ({
 }: {
 	searchParams: Promise<Record<string, string>>;
 }) => {
-	const { periode } = await searchParams;
+	const params = await searchParams;
+	const { periode } = params;
+
 	if (!periode) {
 		const defaultPeriode = currentPeriode();
 		return redirect(`/dashboard?periode=${defaultPeriode}`);
 	}
 
-	const orgs = await apiFetch<OrganizationMini[]>("/organization/list");
+	const search = new URLSearchParams(params);
+	search.delete("periode");
+	const path = `/tunkin/${periode}?${search.toString()}`;
+
+	const [orgs, tunkinData] = await Promise.all([
+		apiFetch<OrganizationMini[]>("/organization/list"),
+		apiFetch<PageResponse<Tunkin>>(path),
+	]);
 
 	return (
-		<div className="grid">
-			<TunkinFilterComponent orgs={orgs} />
-			<Suspense fallback={<div>Loading...</div>}>
-				<TunkinComponent orgs={orgs} />
-			</Suspense>
-		</div>
+		<DashboardFilterProvider>
+			<div className="grid">
+				<TunkinFilterComponent orgs={orgs} />
+				<TunkinComponent orgs={orgs} data={tunkinData} />
+			</div>
+		</DashboardFilterProvider>
 	);
 };
 

@@ -42,8 +42,11 @@ export const useTunkinFormDialog = ({
 
 	const { mutate: uploadMutate, isPending: isUploading } = useMutation({
 		mutationFn: doUpload,
-		onSuccess: (data) => {
-			if (data.errors) throw data.errors;
+		onSuccess: (result) => {
+			if (!result.ok) {
+				toast.error(result.errors?.join("\n") || result.message);
+				return;
+			}
 			handleOpenChange(false);
 
 			toast.success("Data Tunkin berhasil diupload");
@@ -53,8 +56,8 @@ export const useTunkinFormDialog = ({
 			onSuccess?.();
 			qc.invalidateQueries({ queryKey: ["tunkin", params.toString()] });
 		},
-		onError: (error: string[]) => {
-			toast.error(error.join("\n"));
+		onError: (error) => {
+			toast.error(error.message || "Gagal mengupload data");
 		},
 	});
 

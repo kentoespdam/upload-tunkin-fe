@@ -5,9 +5,9 @@ import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { ActiveFilters } from "@/components/dashboard/active-filters";
 import FilterFields from "@/components/dashboard/filter-fields";
 import { Button } from "@/components/ui/button";
-import { useTunkinFilter } from "@/hooks/use-tunkin-filter";
 import { cn } from "@/lib/utils";
 import type { OrganizationMini } from "@/tipes/organization";
+import { useFilterContext } from "./filter-provider";
 import TunkinFormDialog from "./form-dialog";
 
 interface TunkinFilterProps {
@@ -25,7 +25,7 @@ const TunkinFilterComponent = ({ orgs }: TunkinFilterProps) => {
 		clearFilters,
 		hasActiveFilters,
 		activeFilterCount,
-	} = useTunkinFilter();
+	} = useFilterContext();
 
 	const [showFilters, setShowFilters] = useState(true);
 	const filterRef = useRef<HTMLDivElement>(null);
