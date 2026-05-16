@@ -4,8 +4,7 @@ import { FilterBadge } from "./filter-badge";
 
 interface ActiveFiltersProps {
 	periode: string;
-	nipam: string;
-	nama: string;
+	search: string;
 	orgId: string;
 	hasActiveFilters: boolean;
 	onFilterChange: (id: string, value: string) => void;
@@ -14,23 +13,20 @@ interface ActiveFiltersProps {
 
 const FILTER_ICONS = {
 	periode: Calendar,
-	nipam: Grid3x3,
-	nama: User,
+	search: User,
 	orgId: Building2,
 };
 
 const FILTER_VARIANTS = {
 	periode: "primary" as const,
-	nipam: "secondary" as const,
-	nama: "info" as const,
+	search: "info" as const,
 	orgId: "primary" as const,
 };
 
 export const ActiveFilters = memo(
 	({
 		periode,
-		nipam,
-		nama,
+		search,
 		orgId,
 		hasActiveFilters,
 		onFilterChange,
@@ -39,11 +35,10 @@ export const ActiveFilters = memo(
 		const filters = useMemo(
 			() => [
 				{ id: "periode", value: periode, label: "Periode" },
-				{ id: "nipam", value: nipam, label: "NIPAM" },
-				{ id: "nama", value: nama, label: "Nama" },
+				{ id: "search", value: search, label: "SEARCH" },
 				{ id: "orgId", value: orgId, label: "Organisasi" },
 			],
-			[periode, nipam, nama, orgId],
+			[periode, search, orgId],
 		);
 
 		const activeFilters = useMemo(

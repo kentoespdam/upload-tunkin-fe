@@ -4,8 +4,7 @@ import { useDebounceCallback } from "./use-debounce-callback";
 
 const FILTER_FIELDS = {
 	PERIODE: "periode",
-	NIPAM: "nipam",
-	NAMA: "nama",
+	SEARCH: "search",
 	ORG_ID: "orgId",
 } as const;
 
@@ -13,8 +12,7 @@ const PAGINATION_FIELDS = ["page", "size"] as const;
 
 export interface FilterValues {
 	periode: string;
-	nipam: string;
-	nama: string;
+	search: string;
 	orgId: string;
 }
 
@@ -32,8 +30,7 @@ export const useTunkinFilter = (
 	const filterValues = useMemo<FilterValues>(
 		() => ({
 			periode: params.get(FILTER_FIELDS.PERIODE) ?? "",
-			nipam: params.get(FILTER_FIELDS.NIPAM) ?? "",
-			nama: params.get(FILTER_FIELDS.NAMA) ?? "",
+			search: params.get(FILTER_FIELDS.SEARCH) ?? "",
 			orgId: params.get(FILTER_FIELDS.ORG_ID) ?? "",
 		}),
 		[params],
@@ -70,7 +67,7 @@ export const useTunkinFilter = (
 		[replace, startTransition],
 	);
 
-	const debounceSearch = useDebounceCallback(replaceUrl, 400);
+	const debounceSearch = useDebounceCallback(replaceUrl, 600);
 
 	const handleInputChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
