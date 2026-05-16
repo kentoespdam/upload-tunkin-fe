@@ -17,8 +17,7 @@ interface TunkinFilterProps {
 const TunkinFilterComponent = ({ orgs }: TunkinFilterProps) => {
 	const {
 		periode,
-		nipam,
-		nama,
+		search,
 		orgId,
 		handleInputChange,
 		handleSelectChange,
@@ -91,8 +90,7 @@ const TunkinFilterComponent = ({ orgs }: TunkinFilterProps) => {
 					<div className="overflow-hidden">
 						<FilterFields
 							periode={periode}
-							nipam={nipam}
-							nama={nama}
+							search={search}
 							orgId={orgId}
 							orgs={orgs}
 							onInputChange={handleInputChange}
@@ -104,8 +102,7 @@ const TunkinFilterComponent = ({ orgs }: TunkinFilterProps) => {
 				{/* Active Filters Display */}
 				<ActiveFilters
 					periode={periode}
-					nipam={nipam}
-					nama={nama}
+					search={search}
 					orgId={orgId}
 					hasActiveFilters={hasActiveFilters}
 					onFilterChange={handleSelectChange}

@@ -1,4 +1,4 @@
-import { Building2, Calendar, Grid3x3, User } from "lucide-react";
+import { Building2, Calendar, Grid3x3 } from "lucide-react";
 import { memo } from "react";
 import OrganizationList from "@/components/form/organization-list";
 import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
@@ -8,8 +8,7 @@ import type { OrganizationMini } from "@/tipes/organization";
 
 interface FilterFieldsProps {
 	periode: string;
-	nipam: string;
-	nama: string;
+	search: string;
 	orgId: string;
 	orgs: OrganizationMini[];
 	onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -26,28 +25,19 @@ const FILTER_CONFIG = [
 		description: "Cari berdasarkan periode",
 	},
 	{
-		id: "nipam",
-		label: "NIPAM",
-		placeholder: "Nomor NIPAM",
+		id: "search",
+		label: "Search Nipam/Nama",
+		placeholder: "Search NIPAM / Nama",
 		icon: Grid3x3,
 		type: "search" as const,
 		description: "Cari berdasarkan nomor NIPAM",
-	},
-	{
-		id: "nama",
-		label: "Nama",
-		placeholder: "Nama lengkap pelanggan",
-		icon: User,
-		type: "text" as const,
-		description: "Cari berdasarkan nama",
 	},
 ];
 
 export const FilterFields = memo(
 	({
 		periode,
-		nipam,
-		nama,
+		search,
 		orgId,
 		orgs,
 		onInputChange,
@@ -65,9 +55,7 @@ export const FilterFields = memo(
 								</Label>
 								<Input
 									id={id}
-									defaultValue={
-										id === "periode" ? periode : id === "nipam" ? nipam : nama
-									}
+									defaultValue={id === "periode" ? periode : search}
 									onChange={onInputChange}
 									placeholder={placeholder}
 									className="w-full transition-colors"
