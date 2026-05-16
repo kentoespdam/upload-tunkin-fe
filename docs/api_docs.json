@@ -132,6 +132,43 @@
 				}
 			}
 		},
+		"/tunkin/exists/{periode}": {
+			"get": {
+				"tags": ["Tunkin Endpoints"],
+				"summary": "Cek Data Tunkin",
+				"operationId": "check_tunkin_exists_tunkin_exists__periode__get",
+				"security": [{ "OAuth2PasswordBearer": [] }],
+				"parameters": [
+					{
+						"name": "periode",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string", "title": "Periode" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TunkinExistsResponse"
+								}
+							}
+						}
+					},
+					"404": { "description": "Not found" },
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+							}
+						}
+					}
+				}
+			}
+		},
 		"/tunkin/{periode}": {
 			"get": {
 				"tags": ["Tunkin Endpoints"],
@@ -235,6 +272,22 @@
 				"security": [{ "OAuth2PasswordBearer": [] }]
 			}
 		},
+		"/tunkin/template/download": {
+			"get": {
+				"tags": ["Tunkin Endpoints"],
+				"summary": "Download Template File",
+				"description": "Download the Tunkin template Excel file.",
+				"operationId": "download_template_file_tunkin_template_download_get",
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": { "application/json": { "schema": {} } }
+					},
+					"404": { "description": "Not found" }
+				},
+				"security": [{ "OAuth2PasswordBearer": [] }]
+			}
+		},
 		"/organization": {
 			"get": {
 				"tags": ["Organization"],
@@ -318,6 +371,15 @@
 				"type": "object",
 				"required": ["token"],
 				"title": "RefreshTokenRequest"
+			},
+			"TunkinExistsResponse": {
+				"properties": {
+					"exists": { "type": "boolean", "title": "Exists" },
+					"count": { "type": "integer", "title": "Count" }
+				},
+				"type": "object",
+				"required": ["exists", "count"],
+				"title": "TunkinExistsResponse"
 			},
 			"Token": {
 				"properties": {

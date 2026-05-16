@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { apiFetch } from "@/lib/api";
+import { ApiError, apiFetch } from "@/lib/api";
 import type { PageResponse } from "@/tipes/commons";
 import type { OrganizationMini } from "@/tipes/organization";
 import type { Tunkin } from "@/tipes/tunkin";
@@ -14,7 +14,7 @@ const currentPeriode = () => {
 	return `${tahun}${bulan}`;
 };
 
-const DashboardPage = async ({
+const DashboardRoutePage = async ({
 	searchParams,
 }: {
 	searchParams: Promise<Record<string, string>>;
@@ -31,14 +31,29 @@ const DashboardPage = async ({
 	search.delete("periode");
 	const path = `/tunkin/${periode}?${search.toString()}`;
 
-	const [orgs, tunkinData] = await Promise.all([
-		apiFetch<OrganizationMini[]>("/organization/list"),
-		apiFetch<PageResponse<Tunkin>>(path),
-	]);
+	const result = await (async () => {
+		try {
+			return await Promise.all([
+				apiFetch<OrganizationMini[]>("/organization"),
+				apiFetch<PageResponse<Tunkin>>(path),
+			]);
+		} catch (error) {
+			if (error instanceof ApiError && error.status === 401) {
+				return "AUTH_ERROR" as const;
+			}
+			throw error;
+		}
+	})();
+
+	if (result === "AUTH_ERROR") {
+		redirect("/login");
+	}
+
+	const [orgs, tunkinData] = result;
 
 	return (
 		<DashboardFilterProvider>
-			<div className="grid">
+			<div className="flex flex-col flex-1 min-h-0 min-w-0 gap-4">
 				<TunkinFilterComponent orgs={orgs} />
 				<TunkinComponent orgs={orgs} data={tunkinData} />
 			</div>
@@ -46,4 +61,4 @@ const DashboardPage = async ({
 	);
 };
 
-export default DashboardPage;
+export default DashboardRoutePage;

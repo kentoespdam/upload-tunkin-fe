@@ -54,7 +54,7 @@ Real seams (≥2 adapters or distinct invariant per layer). Do not merge.
 - **Upload + confirm flow** (`src/hooks/upload-hook.ts` → being deepened into `useUploadTunkin` + `<UploadTunkinDialog>`, see bead `pkn`):
   1. Validate via Zod (in wrapper component).
   2. Probe `cekExistingTunkin(periode)`. **Probe failure is blocking** — surface toast, do not fall through to upload (Probe is a guardrail; if it's broken, treat the world as unknown). Tracked race with BE in bead `z74`.
-  3. If `is_exist` → controlled `<AlertDialog>` overwrite-confirm (not `window.confirm`). Periode visible in dialog body.
+  3. If `exists` → controlled `<AlertDialog>` overwrite-confirm (not `window.confirm`). Periode + `count` visible in dialog body.
   4. Submit `doUpload(formData)`.
   5. On success → wrapper invalidates `["tunkin", params.toString()]`. Hook itself is cache-agnostic.
 
@@ -62,7 +62,7 @@ Real seams (≥2 adapters or distinct invariant per layer). Do not merge.
 
 - `src/tipes/` (not `types/`) — Indonesian spelling kept on purpose.
 - `src/proxy.ts` — Next 16 middleware convention (replaces `middleware.ts`).
-- Indonesian copy in UI is standard. Code identifiers stay English unless mirroring API (`is_exist`, `org_id`).
+- Indonesian copy in UI is standard. Code identifiers stay English unless mirroring API (`exists`, `org_id`).
 - API response wrapper: `BaseResponse<T> = { data, status, message, timestamp, request_id, errors? }`. `apiFetch` unwraps `.data`.
 
 ## Component layout

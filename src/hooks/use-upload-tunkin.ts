@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { cekExistingTunkin, doUpload } from "@/app/dashboard/action";
+import { doUpload } from "@/app/dashboard/action";
 
 export type UploadPhase =
 	| "idle"
@@ -13,12 +13,16 @@ export type UploadResult =
 	| { ok: true }
 	| {
 			ok: false;
-			reason: "probe-failed" | "upload-failed" | "cancelled";
+			reason:
+				| "probe-failed"
+				| "upload-failed"
+				| "cancelled"
+				| "upload-conflict";
 			error?: string[] | string;
 	  };
 
 interface UseUploadTunkinOptions {
-	confirmOverwrite: (periode: string) => Promise<boolean>;
+	confirmOverwrite: (periode: string, count: number) => Promise<boolean>;
 	onSuccess?: () => void;
 }
 
@@ -37,11 +41,28 @@ export const useUploadTunkin = ({
 		setError(null);
 
 		try {
-			const probe = await cekExistingTunkin(values.periode);
+			const probeRes = await fetch(
+				`/api/proxy/tunkin/exists/${values.periode}`,
+				{ credentials: "same-origin" },
+			);
 
-			if (probe.is_exist) {
+			if (!probeRes.ok) {
+				throw new Error("Gagal mengecek data eksis");
+			}
+
+			const probeData = (await probeRes.json()) as any;
+
+			// Handle both BaseResponse structure and flat structure
+			const isSuccess = probeData.ok === true || probeData.status === 200;
+			const probe = probeData.data || probeData;
+
+			if (!isSuccess && probeData.ok !== undefined) {
+				throw new Error(probeData.message || "Gagal mengecek data eksis");
+			}
+
+			if (probe && typeof probe.exists === "boolean" && probe.exists) {
 				setPhase("confirming");
-				const confirmed = await confirmOverwrite(values.periode);
+				const confirmed = await confirmOverwrite(values.periode, probe.count);
 				if (!confirmed) {
 					setPhase("idle");
 					return { ok: false, reason: "cancelled" };
@@ -56,6 +77,16 @@ export const useUploadTunkin = ({
 			const result = await doUpload(formData);
 
 			if (!result.ok) {
+				if (result.status === 409) {
+					setPhase("error");
+					setError(result.message);
+					return {
+						ok: false,
+						reason: "upload-conflict",
+						error: result.message,
+					};
+				}
+
 				setPhase("error");
 				setError(result.message);
 				return {

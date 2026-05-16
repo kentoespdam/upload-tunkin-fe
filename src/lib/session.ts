@@ -1,4 +1,5 @@
 import "server-only";
+import { decodeJwt } from "jose";
 import { cookies } from "next/headers";
 import type { JwtUserToken, LoginToken } from "@/tipes/auth";
 
@@ -11,28 +12,23 @@ export type Session = {
 };
 
 /**
- * Decodes JWT payload without verification.
- * Safe to use on server for HttpOnly cookies.
+ * Extracts the expiration time from a JWT.
  */
-const decodeJwt = (token: string): JwtUserToken | null => {
+export const getTokenExp = (token: string): number => {
 	try {
-		const parts = token.split(".");
-		if (parts.length !== 3) return null;
-		const payload = parts[1];
-		// Using Buffer for Node.js compatibility (proxy.ts runs in nodejs)
-		const decoded = Buffer.from(payload, "base64").toString("utf-8");
-		return JSON.parse(decoded);
+		const decoded = decodeJwt<JwtUserToken>(token);
+		return (decoded?.exp || 0) * 1000;
 	} catch {
-		return null;
+		return 0;
 	}
 };
 
 /**
- * Returns the current session state from cookies.
- * Synchronous and network-free.
+ * Returns the current session state from a given cookie store.
  */
-export const currentSession = async (): Promise<Session> => {
-	const cookieStore = await cookies();
+export const getSessionFromCookies = (cookieStore: {
+	get: (name: string) => { value: string } | undefined;
+}): Session => {
 	const accessToken = cookieStore.get("access_token")?.value ?? "";
 	const refreshToken = cookieStore.get("refresh_token")?.value ?? "";
 
@@ -46,7 +42,13 @@ export const currentSession = async (): Promise<Session> => {
 		};
 	}
 
-	const user = decodeJwt(accessToken);
+	let user: JwtUserToken | null = null;
+	try {
+		user = decodeJwt<JwtUserToken>(accessToken);
+	} catch (_e) {
+		// Ignore decode errors
+	}
+
 	const expiresAt = user ? user.exp * 1000 : 0;
 	const isExpired = Date.now() >= expiresAt - 5000; // 5s buffer
 
@@ -60,13 +62,23 @@ export const currentSession = async (): Promise<Session> => {
 };
 
 /**
+ * Returns the current session state from cookies.
+ * Synchronous and network-free.
+ */
+export const currentSession = async (): Promise<Session> => {
+	const cookieStore = await cookies();
+	return getSessionFromCookies(cookieStore);
+};
+
+/**
  * Writes tokens to HttpOnly cookies.
  */
 export const signIn = async (token: LoginToken) => {
 	const cookieStore = await cookies();
 
-	const user = decodeJwt(token.access_token);
-	const expiresAt = user ? new Date(user.exp * 1000) : undefined;
+	const expiresAt = token.access_token
+		? new Date(getTokenExp(token.access_token))
+		: undefined;
 
 	const commonOptions = {
 		httpOnly: true,
@@ -81,14 +93,7 @@ export const signIn = async (token: LoginToken) => {
 	});
 
 	if (token.refresh_token) {
-		// If refresh token is also a JWT, we could use its exp.
-		// For now, follow the requirement to use JWT exp (assumed from access_token or common sense).
-		// Typically refresh tokens have much longer life, but we'll use access token exp
-		// if that's what's intended or if refresh token isn't a JWT.
-		const refreshUser = decodeJwt(token.refresh_token);
-		const refreshExpiresAt = refreshUser
-			? new Date(refreshUser.exp * 1000)
-			: undefined;
+		const refreshExpiresAt = new Date(getTokenExp(token.refresh_token));
 
 		cookieStore.set("refresh_token", token.refresh_token, {
 			...commonOptions,

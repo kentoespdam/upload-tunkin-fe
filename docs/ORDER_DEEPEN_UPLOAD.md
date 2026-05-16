@@ -58,7 +58,7 @@ Ground truth: [CONTEXT.md](../CONTEXT.md).
 - [x] New file `src/hooks/use-upload-tunkin.ts`:
   - Interface: `phase: UploadPhase`, `error: Error|null`, `submit(values) → Promise<UploadResult>`, opsi `{ confirmOverwrite, onSuccess? }`.
   - Tidak boleh import `@tanstack/react-query`, `next/navigation`, `react-hook-form`, atau `@hookform/resolvers`.
-  - Policy: validate (caller-side via Zod) → `cekExistingTunkin` → if `is_exist` → `await confirmOverwrite(periode)` → if confirmed → `doUpload`.
+  - Policy: validate (caller-side via Zod) → `cekExistingTunkin` → if `exists` → `await confirmOverwrite(periode)` → if confirmed → `doUpload`.
   - **Probe failure = BLOCKING** → resolve `{ ok: false, reason: "probe-failed" }`. Jangan fall-through ke upload.
   - Pakai `if (!result.ok)` (hasil `safeAction`), bukan `throw data.errors`.
 - [x] New file `src/components/form/upload-tunkin-dialog.tsx` (adapted dari `src/app/dashboard/form-dialog.tsx`):
@@ -126,6 +126,6 @@ xax ─ independent, trivial
 
 ## Follow-ups (out of scope di epic ini)
 
-- `z74` — koordinasi BE: Probe→Upload race (preferred fix = `409` dari `/tunkin/upload` saat periode muncul setelah probe window).
+- [x] `z74` — koordinasi BE: Probe→Upload race (preferred fix = `409` dari `/tunkin/upload` saat periode muncul setelah probe window).
 - Generalize `useTunkinFilter` → `useUrlFilter<T>` + unifikasi pagination dengan `pageable.tsx`.
 - Probe SLA / observability dengan tim BE.

@@ -28,7 +28,6 @@ type TunkinTableBodyProps = {
 type TunkinRow = Tunkin & { urut: number };
 
 // Constants
-const TABLE_MIN_HEIGHT = 411;
 const ROW_ANIM_DELAY_MS = 40;
 
 // Table Body Component
@@ -73,7 +72,10 @@ const TunkinTableRow = memo(
 					<Badge variant={"outline"}>{row.status_pegawai}</Badge>
 				</TableCell>
 				<TableCell className="border" align="right">
-					{formatRupiah(row.nominal)}
+					{formatRupiah(row.tunkin)}
+				</TableCell>
+				<TableCell className="border" align="right">
+					{formatRupiah(row.pph21_ter)}
 				</TableCell>
 			</TableRow>
 		);
@@ -84,7 +86,7 @@ TunkinTableRow.displayName = "TunkinTableRow";
 // Table Header Component
 const TunkinTableHeader = memo(() => {
 	return (
-		<TableHeader>
+		<TableHeader className="sticky top-0 z-10">
 			<TableRow>
 				{tunkinTableHeders.map((column) => (
 					<TableHead
@@ -114,15 +116,14 @@ const TunkinComponent = memo(
 		const isDataEmpty = !data || data.is_empty;
 
 		return (
-			<div className="grid gap-2">
+			<div className="flex flex-col flex-1 min-h-0 min-w-0 gap-4">
 				<div
 					className={cn(
-						"overflow-auto relative transition-opacity duration-200",
+						"flex-1 min-h-0 overflow-auto relative transition-opacity duration-200 border rounded-md",
 						isPending && "opacity-60 pointer-events-none",
 					)}
-					style={{ minHeight: TABLE_MIN_HEIGHT }}
 				>
-					<Table className="border animate-table-mount">
+					<Table className="animate-table-mount">
 						<TunkinTableHeader />
 
 						{isDataEmpty ? (
@@ -133,7 +134,9 @@ const TunkinComponent = memo(
 					</Table>
 				</div>
 
-				<PaginationBuilder data={data} />
+				<div className="shrink-0">
+					<PaginationBuilder data={data} />
+				</div>
 			</div>
 		);
 	},

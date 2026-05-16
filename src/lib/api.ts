@@ -1,7 +1,8 @@
 import "server-only";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import type { LoginToken } from "@/tipes/auth";
+import type { BaseToken } from "@/tipes/auth";
 import type { BaseResponse } from "@/tipes/commons";
 import { currentSession, signOut, writeTokens } from "./session";
 import { appConfig } from "./utils";
@@ -79,7 +80,7 @@ export async function ensureFreshToken(): Promise<string> {
 
 	// Attempt refresh
 	try {
-		const result = await rawFetch<LoginToken>("/refresh", {
+		const result = await rawFetch<BaseToken>("/refresh", {
 			method: "POST",
 			body: JSON.stringify({ token: session.refreshToken }),
 			headers: {
@@ -87,11 +88,29 @@ export async function ensureFreshToken(): Promise<string> {
 			},
 		});
 
-		await writeTokens(result);
+		if (!result || !result.access_token) {
+			throw new Error("Invalid refresh token response");
+		}
+
+		try {
+			await writeTokens({ ...result, refresh_token: session.refreshToken });
+		} catch (cookieError) {
+			// This happens when called during render. We still want to return the token
+			// so the current request can succeed.
+			console.warn(
+				"Failed to write tokens to cookies (likely during render):",
+				cookieError,
+			);
+		}
+
 		return result.access_token;
 	} catch (error) {
 		console.error("Token refresh failed:", error);
-		await signOut();
+		try {
+			await signOut();
+		} catch (_e) {
+			// Ignore sign out error during render
+		}
 		redirect("/login");
 	}
 }
@@ -119,6 +138,7 @@ export async function rawFetch<T>(
 
 	if (!res.ok) {
 		const errorBody = result as { message?: string };
+		console.error(`API Error: ${res.status} ${url}`, result);
 		throw new ApiError(
 			res.status,
 			result,
@@ -126,8 +146,7 @@ export async function rawFetch<T>(
 		);
 	}
 
-	// Assuming backend always wraps in BaseResponse<T>
-	return (result as BaseResponse<T>).data;
+	return result as T;
 }
 
 /**
@@ -138,10 +157,17 @@ export async function apiFetch<T>(
 	path: string,
 	init?: RequestInit,
 ): Promise<T> {
-	const token = await ensureFreshToken();
+	// 1. Try to get token from current request headers (optimized path from middleware)
+	const headersList = await headers();
+	let token = headersList.get("Authorization")?.replace("Bearer ", "");
 
-	const headers = new Headers(init?.headers);
-	headers.set("Authorization", `Bearer ${token}`);
+	// 2. Fallback to session cookies + manual refresh if middleware didn't provide it
+	if (!token) {
+		token = await ensureFreshToken();
+	}
+
+	const headersMap = new Headers(init?.headers);
+	headersMap.set("Authorization", `Bearer ${token}`);
 
 	let body = init?.body;
 	// Automatic JSON serialization for plain objects
@@ -154,14 +180,16 @@ export async function apiFetch<T>(
 		typeof body === "object"
 	) {
 		body = JSON.stringify(body);
-		if (!headers.has("Content-Type")) {
-			headers.set("Content-Type", "application/json");
+		if (!headersMap.has("Content-Type")) {
+			headersMap.set("Content-Type", "application/json");
 		}
 	}
 
-	return rawFetch<T>(path, {
+	const response = await rawFetch<BaseResponse<T>>(path, {
 		...init,
-		headers,
+		headers: headersMap,
 		body,
 	});
+
+	return response.data;
 }

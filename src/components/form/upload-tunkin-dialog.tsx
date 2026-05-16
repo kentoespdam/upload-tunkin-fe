@@ -42,9 +42,11 @@ export const UploadTunkinDialog = memo(() => {
 		((value: boolean) => void) | null
 	>(null);
 	const [confirmPeriode, setConfirmPeriode] = useState("");
+	const [confirmCount, setConfirmCount] = useState(0);
 
-	const confirmOverwrite = useCallback((periode: string) => {
+	const confirmOverwrite = useCallback((periode: string, count: number) => {
 		setConfirmPeriode(periode);
+		setConfirmCount(count);
 		setIsConfirmOpen(true);
 		return new Promise<boolean>((resolve) => {
 			setConfirmResolve(() => resolve);
@@ -69,26 +71,29 @@ export const UploadTunkinDialog = memo(() => {
 		},
 	});
 
-	const onSubmit = async (values: UploadTunkinSchema) => {
-		const file = values.file as unknown as File;
-		if (!file) {
-			toast.error("File wajib diisi");
-			return;
-		}
+	const onSubmit = useCallback(
+		async (values: UploadTunkinSchema) => {
+			const file = values.file as unknown as File;
+			if (!file) {
+				toast.error("File wajib diisi");
+				return;
+			}
 
-		const result = await submit({
-			file,
-			periode: `${values.tahun}${values.bulan}`,
-		});
+			const result = await submit({
+				file,
+				periode: `${values.tahun}${values.bulan}`,
+			});
 
-		if (!result.ok && result.reason !== "cancelled") {
-			toast.error(
-				Array.isArray(result.error)
-					? result.error.join("\n")
-					: (result.error as string) || "Gagal upload",
-			);
-		}
-	};
+			if (!result.ok && result.reason !== "cancelled") {
+				toast.error(
+					Array.isArray(result.error)
+						? result.error.join("\n")
+						: (result.error as string) || "Gagal upload",
+				);
+			}
+		},
+		[submit],
+	);
 
 	const handleConfirm = (value: boolean) => {
 		setIsConfirmOpen(false);
@@ -158,8 +163,9 @@ export const UploadTunkinDialog = memo(() => {
 					<AlertDialogHeader>
 						<AlertDialogTitle>Konfirmasi Overwrite</AlertDialogTitle>
 						<AlertDialogDescription>
-							Data Tunkin untuk periode {confirmPeriode} sudah ada. Apakah Anda
-							ingin melanjutkan dan menimpa data yang ada?
+							Data Tunkin untuk periode {confirmPeriode} sudah ada sebanyak{" "}
+							<span className="font-bold">{confirmCount}</span> data. Apakah
+							Anda ingin melanjutkan dan menimpa data yang ada?
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>

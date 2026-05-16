@@ -34,8 +34,8 @@ const TunkinFilterComponent = ({ orgs }: TunkinFilterProps) => {
 	}, []);
 
 	return (
-		<div className="sticky top-0 z-10 bg-linear-to-b from-background/95 to-background/90 backdrop-blur supports-backdrop-filter:bg-linear-to-b supports-backdrop-filter:from-background/60 supports-backdrop-filter:to-background/50 border-b shadow-sm">
-			<div className="container mx-auto px-4 py-4">
+		<div className="shrink-0 bg-linear-to-b from-background/95 to-background/90 backdrop-blur supports-backdrop-filter:bg-linear-to-b supports-backdrop-filter:from-background/60 supports-backdrop-filter:to-background/50 border-b shadow-sm rounded-md">
+			<div className="w-full px-4 py-4">
 				{/* Filter Header */}
 				<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
 					{/* Filter Toggle Button */}

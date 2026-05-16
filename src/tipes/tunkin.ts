@@ -9,7 +9,8 @@ export type Tunkin = {
 	jabatan: string;
 	organisasi: string;
 	status_pegawai: string;
-	nominal: number;
+	tunkin: number;
+	pph21_ter: number;
 };
 
 const MAX_UPLOAD_SIZE = 10 * 1024 * 1024; // 10 MB
@@ -47,5 +48,6 @@ export const tunkinTableHeders: ColumnDef[] = [
 	{ id: "jabatan", title: "Jabatan" },
 	{ id: "organisasi", title: "Organisasi" },
 	{ id: "status_pegawai", title: "Status Pegawai" },
-	{ id: "nominal", title: "Nominal" },
+	{ id: "tunkin", title: "Tunkin" },
+	{ id: "pph21_ter", title: "Pph21 TER" },
 ];
