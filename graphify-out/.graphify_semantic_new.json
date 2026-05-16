@@ -1,0 +1,1362 @@
+{
+	"nodes": [
+		{
+			"id": "proxy_proxy",
+			"label": "Proxy Middleware",
+			"file_type": "code",
+			"source_file": "src/proxy.ts",
+			"source_location": null
+		},
+		{
+			"id": "proxy_renewaccess",
+			"label": "Renew Access Token",
+			"file_type": "code",
+			"source_file": "src/proxy.ts",
+			"source_location": null
+		},
+		{
+			"id": "layout_rootlayout",
+			"label": "Root Layout",
+			"file_type": "code",
+			"source_file": "src/app/layout.tsx",
+			"source_location": null
+		},
+		{
+			"id": "page_home",
+			"label": "Home Page",
+			"file_type": "code",
+			"source_file": "src/app/page.tsx",
+			"source_location": null
+		},
+		{
+			"id": "template_template",
+			"label": "Root Template",
+			"file_type": "code",
+			"source_file": "src/app/template.tsx",
+			"source_location": null
+		},
+		{
+			"id": "login_loginpage",
+			"label": "Login Page",
+			"file_type": "code",
+			"source_file": "src/app/login/page.tsx",
+			"source_location": null
+		},
+		{
+			"id": "login_action_dologin",
+			"label": "Do Login Action",
+			"file_type": "code",
+			"source_file": "src/app/login/action.ts",
+			"source_location": null
+		},
+		{
+			"id": "login_form_loginform",
+			"label": "Login Form",
+			"file_type": "code",
+			"source_file": "src/app/login/login-form.tsx",
+			"source_location": null
+		},
+		{
+			"id": "login_template_template",
+			"label": "Login Template",
+			"file_type": "code",
+			"source_file": "src/app/login/template.tsx",
+			"source_location": null
+		},
+		{
+			"id": "dashboard_layout_template",
+			"label": "Dashboard Layout",
+			"file_type": "code",
+			"source_file": "src/app/dashboard/layout.tsx",
+			"source_location": null
+		},
+		{
+			"id": "dashboard_filter_tunkinfiltercomponent",
+			"label": "Tunkin Filter Component",
+			"file_type": "code",
+			"source_file": "src/app/dashboard/filter.tsx",
+			"source_location": null
+		},
+		{
+			"id": "dashboard_page_dashboardpage",
+			"label": "Dashboard Page",
+			"file_type": "code",
+			"source_file": "src/app/dashboard/page.tsx",
+			"source_location": null
+		},
+		{
+			"id": "dashboard_loading_loading",
+			"label": "Dashboard Loading",
+			"file_type": "code",
+			"source_file": "src/app/dashboard/loading.tsx",
+			"source_location": null
+		},
+		{
+			"id": "dashboard_action_fetchtunkin",
+			"label": "Fetch Tunkin Data",
+			"file_type": "code",
+			"source_file": "src/app/dashboard/action.ts",
+			"source_location": null
+		},
+		{
+			"id": "dashboard_action_cekexistingtunkin",
+			"label": "Check Existing Tunkin",
+			"file_type": "code",
+			"source_file": "src/app/dashboard/action.ts",
+			"source_location": null
+		},
+		{
+			"id": "dashboard_action_doupload",
+			"label": "Upload Tunkin Action",
+			"file_type": "code",
+			"source_file": "src/app/dashboard/action.ts",
+			"source_location": null
+		},
+		{
+			"id": "dashboard_component_tunkincomponent",
+			"label": "Tunkin Table Component",
+			"file_type": "code",
+			"source_file": "src/app/dashboard/component.tsx",
+			"source_location": null
+		},
+		{
+			"id": "dashboard_template_template",
+			"label": "Dashboard Template",
+			"file_type": "code",
+			"source_file": "src/app/dashboard/template.tsx",
+			"source_location": null
+		},
+		{
+			"id": "dashboard_form_dialog_tunkinformdialog",
+			"label": "Tunkin Form Dialog",
+			"file_type": "code",
+			"source_file": "src/app/dashboard/form-dialog.tsx",
+			"source_location": null
+		},
+		{
+			"id": "hooks_usetunkinfilter_usetunkinfilter",
+			"label": "useTunkinFilter Hook",
+			"file_type": "code",
+			"source_file": "src/hooks/use-tunkin-filter.ts",
+			"source_location": null
+		},
+		{
+			"id": "hooks_usedebouncecallback_usedebouncecallback",
+			"label": "useDebounceCallback Hook",
+			"file_type": "code",
+			"source_file": "src/hooks/use-debounce-callback.tsx",
+			"source_location": null
+		},
+		{
+			"id": "hooks_usemobile_useismobile",
+			"label": "useIsMobile Hook",
+			"file_type": "code",
+			"source_file": "src/hooks/use-mobile.ts",
+			"source_location": null
+		},
+		{
+			"id": "hooks_useunmount_useunmount",
+			"label": "useUnmount Hook",
+			"file_type": "code",
+			"source_file": "src/hooks/use-unmount.tsx",
+			"source_location": null
+		},
+		{
+			"id": "hooks_usedebouncevalue_usedebouncevalue",
+			"label": "useDebounceValue Hook",
+			"file_type": "code",
+			"source_file": "src/hooks/use-debounce-value.tsx",
+			"source_location": null
+		},
+		{
+			"id": "uploadhook_usetunkinformdialog",
+			"label": "useTunkinFormDialog",
+			"file_type": "code",
+			"source_file": "src/hooks/upload-hook.ts"
+		},
+		{
+			"id": "commons_baseresponse",
+			"label": "BaseResponse",
+			"file_type": "code",
+			"source_file": "src/tipes/commons.ts"
+		},
+		{
+			"id": "commons_pageresponse",
+			"label": "PageResponse",
+			"file_type": "code",
+			"source_file": "src/tipes/commons.ts"
+		},
+		{
+			"id": "commons_columndef",
+			"label": "ColumnDef",
+			"file_type": "code",
+			"source_file": "src/tipes/commons.ts"
+		},
+		{
+			"id": "template_navitem",
+			"label": "NavItem",
+			"file_type": "code",
+			"source_file": "src/tipes/template.ts"
+		},
+		{
+			"id": "template_navmain",
+			"label": "navMain",
+			"file_type": "code",
+			"source_file": "src/tipes/template.ts"
+		},
+		{
+			"id": "template_navdata",
+			"label": "navData",
+			"file_type": "code",
+			"source_file": "src/tipes/template.ts"
+		},
+		{
+			"id": "formzod_commoninputprops",
+			"label": "CommonInputProps",
+			"file_type": "code",
+			"source_file": "src/tipes/form-zod.ts"
+		},
+		{
+			"id": "formzod_inputzodprops",
+			"label": "InputZodProps",
+			"file_type": "code",
+			"source_file": "src/tipes/form-zod.ts"
+		},
+		{
+			"id": "tunkin_tunkin",
+			"label": "Tunkin",
+			"file_type": "code",
+			"source_file": "src/tipes/tunkin.ts"
+		},
+		{
+			"id": "tunkin_uploadtunkinschema",
+			"label": "UploadTunkinSchema",
+			"file_type": "code",
+			"source_file": "src/tipes/tunkin.ts"
+		},
+		{
+			"id": "tunkin_tunkintableheders",
+			"label": "tunkinTableHeders",
+			"file_type": "code",
+			"source_file": "src/tipes/tunkin.ts"
+		},
+		{
+			"id": "auth_authrequest",
+			"label": "AuthRequest",
+			"file_type": "code",
+			"source_file": "src/tipes/auth.ts"
+		},
+		{
+			"id": "auth_basetoken",
+			"label": "BaseToken",
+			"file_type": "code",
+			"source_file": "src/tipes/auth.ts"
+		},
+		{
+			"id": "auth_jwttoken",
+			"label": "JwtToken",
+			"file_type": "code",
+			"source_file": "src/tipes/auth.ts"
+		},
+		{
+			"id": "auth_jwtusertoken",
+			"label": "JwtUserToken",
+			"file_type": "code",
+			"source_file": "src/tipes/auth.ts"
+		},
+		{
+			"id": "auth_logintoken",
+			"label": "LoginToken",
+			"file_type": "code",
+			"source_file": "src/tipes/auth.ts"
+		},
+		{
+			"id": "auth_loginschema",
+			"label": "LoginSchema",
+			"file_type": "code",
+			"source_file": "src/tipes/auth.ts"
+		},
+		{
+			"id": "organization_organizationmini",
+			"label": "OrganizationMini",
+			"file_type": "code",
+			"source_file": "src/tipes/organization.ts"
+		},
+		{
+			"id": "session_getsession",
+			"label": "getSession",
+			"file_type": "code",
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"id": "session_getaccesstoken",
+			"label": "getAccessToken",
+			"file_type": "code",
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"id": "session_decodetoken",
+			"label": "decodeToken",
+			"file_type": "code",
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"id": "session_getexptoken",
+			"label": "getExpToken",
+			"file_type": "code",
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"id": "session_createsession",
+			"label": "createSession",
+			"file_type": "code",
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"id": "session_refreshsession",
+			"label": "refreshSession",
+			"file_type": "code",
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"id": "session_destroysession",
+			"label": "destroySession",
+			"file_type": "code",
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"id": "session_getuser",
+			"label": "getUser",
+			"file_type": "code",
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"id": "auth_renewtoken",
+			"label": "renewToken",
+			"file_type": "code",
+			"source_file": "src/lib/auth.ts"
+		},
+		{
+			"id": "auth_logout",
+			"label": "logout",
+			"file_type": "code",
+			"source_file": "src/lib/auth.ts"
+		},
+		{
+			"id": "utils_cn",
+			"label": "cn",
+			"file_type": "code",
+			"source_file": "src/lib/utils.ts"
+		},
+		{
+			"id": "utils_appconfig",
+			"label": "appConfig",
+			"file_type": "code",
+			"source_file": "src/lib/utils.ts"
+		},
+		{
+			"id": "utils_geturut",
+			"label": "getUrut",
+			"file_type": "code",
+			"source_file": "src/lib/utils.ts"
+		},
+		{
+			"id": "utils_formatrupiah",
+			"label": "formatRupiah",
+			"file_type": "code",
+			"source_file": "src/lib/utils.ts"
+		},
+		{
+			"id": "fetchhelper_fetchdata",
+			"label": "fetchData",
+			"file_type": "code",
+			"source_file": "src/lib/fetch-helper.ts"
+		},
+		{
+			"id": "organization_fetchorganization",
+			"label": "fetchOrganization",
+			"file_type": "code",
+			"source_file": "src/action/server/organization.ts"
+		},
+		{
+			"id": "loadingtable_loadingtable",
+			"label": "LoadingTable",
+			"file_type": "code",
+			"source_file": "src/components/commons/loading-table.tsx"
+		},
+		{
+			"id": "pageable_paginationbuilder",
+			"label": "PaginationBuilder",
+			"file_type": "code",
+			"source_file": "src/components/commons/pageable.tsx"
+		},
+		{
+			"id": "button_button",
+			"label": "Button",
+			"file_type": "code",
+			"source_file": "src/components/ui/button.tsx"
+		},
+		{
+			"id": "skeleton_skeleton",
+			"label": "Skeleton",
+			"file_type": "code",
+			"source_file": "src/components/ui/skeleton.tsx"
+		},
+		{
+			"id": "field_field",
+			"label": "Field",
+			"file_type": "code",
+			"source_file": "src/components/ui/field.tsx"
+		},
+		{
+			"id": "avatar_avatar",
+			"label": "Avatar",
+			"file_type": "code",
+			"source_file": "src/components/ui/avatar.tsx"
+		},
+		{
+			"id": "togglegroup_togglegroup",
+			"label": "ToggleGroup",
+			"file_type": "code",
+			"source_file": "src/components/ui/toggle-group.tsx"
+		},
+		{
+			"id": "pagination_pagination",
+			"label": "Pagination",
+			"file_type": "code",
+			"source_file": "src/components/ui/pagination.tsx"
+		},
+		{
+			"id": "form_form",
+			"label": "Form",
+			"file_type": "code",
+			"source_file": "src/components/ui/form.tsx"
+		},
+		{
+			"id": "checkbox_checkbox",
+			"label": "Checkbox",
+			"file_type": "code",
+			"source_file": "src/components/ui/checkbox.tsx"
+		},
+		{
+			"id": "dropdown_menu_dropdownmenu",
+			"label": "DropdownMenu",
+			"file_type": "code",
+			"source_file": "src/components/ui/dropdown-menu.tsx"
+		},
+		{
+			"id": "dropdown_menu_dropdownmenucontent",
+			"label": "DropdownMenuContent",
+			"file_type": "code",
+			"source_file": "src/components/ui/dropdown-menu.tsx"
+		},
+		{
+			"id": "badge_badge",
+			"label": "Badge",
+			"file_type": "code",
+			"source_file": "src/components/ui/badge.tsx"
+		},
+		{
+			"id": "badge_badgevariants",
+			"label": "badgeVariants",
+			"file_type": "code",
+			"source_file": "src/components/ui/badge.tsx"
+		},
+		{
+			"id": "tabs_tabs",
+			"label": "Tabs",
+			"file_type": "code",
+			"source_file": "src/components/ui/tabs.tsx"
+		},
+		{
+			"id": "label_label",
+			"label": "Label",
+			"file_type": "code",
+			"source_file": "src/components/ui/label.tsx"
+		},
+		{
+			"id": "drawer_drawer",
+			"label": "Drawer",
+			"file_type": "code",
+			"source_file": "src/components/ui/drawer.tsx"
+		},
+		{
+			"id": "select_select",
+			"label": "Select",
+			"file_type": "code",
+			"source_file": "src/components/ui/select.tsx"
+		},
+		{
+			"id": "select_selecttrigger",
+			"label": "SelectTrigger",
+			"file_type": "code",
+			"source_file": "src/components/ui/select.tsx"
+		},
+		{
+			"id": "breadcrumb_breadcrumb",
+			"label": "Breadcrumb",
+			"file_type": "code",
+			"source_file": "src/components/ui/breadcrumb.tsx"
+		},
+		{
+			"id": "dialog_dialog",
+			"label": "Dialog",
+			"file_type": "code",
+			"source_file": "src/components/ui/dialog.tsx"
+		},
+		{
+			"id": "dialog_dialogcontent",
+			"label": "DialogContent",
+			"file_type": "code",
+			"source_file": "src/components/ui/dialog.tsx"
+		},
+		{
+			"id": "toggle_toggle",
+			"label": "Toggle",
+			"file_type": "code",
+			"source_file": "src/components/ui/toggle.tsx"
+		},
+		{
+			"id": "table_table",
+			"label": "Table",
+			"file_type": "code",
+			"source_file": "src/components/ui/table.tsx"
+		},
+		{
+			"id": "chart_chartcontainer",
+			"label": "ChartContainer",
+			"file_type": "code",
+			"source_file": "src/components/ui/chart.tsx"
+		},
+		{
+			"id": "chart_usechart",
+			"label": "useChart",
+			"file_type": "code",
+			"source_file": "src/components/ui/chart.tsx"
+		},
+		{
+			"id": "chart_charttooltipcontent",
+			"label": "ChartTooltipContent",
+			"file_type": "code",
+			"source_file": "src/components/ui/chart.tsx"
+		},
+		{
+			"id": "sonner_toaster",
+			"label": "Toaster",
+			"file_type": "code",
+			"source_file": "src/components/ui/sonner.tsx"
+		},
+		{
+			"id": "button_loading_loadingbuttonclient",
+			"label": "LoadingButtonClient",
+			"file_type": "code",
+			"source_file": "src/components/ui/button-loading.tsx"
+		},
+		{
+			"id": "input_input",
+			"label": "Input",
+			"file_type": "code",
+			"source_file": "src/components/ui/input.tsx"
+		},
+		{
+			"id": "card_card",
+			"label": "Card",
+			"file_type": "code",
+			"source_file": "src/components/ui/card.tsx"
+		},
+		{
+			"id": "switch_switch",
+			"label": "Switch",
+			"file_type": "code",
+			"source_file": "src/components/ui/switch.tsx"
+		},
+		{
+			"id": "sidebar_sidebar",
+			"label": "Sidebar",
+			"file_type": "code",
+			"source_file": "src/components/ui/sidebar.tsx"
+		},
+		{
+			"id": "sidebar_sidebarprovider",
+			"label": "SidebarProvider",
+			"file_type": "code",
+			"source_file": "src/components/ui/sidebar.tsx"
+		},
+		{
+			"id": "sidebar_usesidebar",
+			"label": "useSidebar",
+			"file_type": "code",
+			"source_file": "src/components/ui/sidebar.tsx"
+		},
+		{
+			"id": "sidebar_sidebartrigger",
+			"label": "SidebarTrigger",
+			"file_type": "code",
+			"source_file": "src/components/ui/sidebar.tsx"
+		},
+		{
+			"id": "tooltip_tooltip",
+			"label": "Tooltip",
+			"file_type": "code",
+			"source_file": "src/components/ui/tooltip.tsx"
+		},
+		{
+			"id": "sheet_sheet",
+			"label": "Sheet",
+			"file_type": "code",
+			"source_file": "src/components/ui/sheet.tsx"
+		},
+		{
+			"id": "sheet_sheetcontent",
+			"label": "SheetContent",
+			"file_type": "code",
+			"source_file": "src/components/ui/sheet.tsx"
+		},
+		{
+			"id": "command_command",
+			"label": "Command",
+			"file_type": "code",
+			"source_file": "src/components/ui/command.tsx"
+		},
+		{
+			"id": "command_commanddialog",
+			"label": "CommandDialog",
+			"file_type": "code",
+			"source_file": "src/components/ui/command.tsx"
+		},
+		{
+			"id": "separator_separator",
+			"label": "Separator",
+			"file_type": "code",
+			"source_file": "src/components/ui/separator.tsx"
+		},
+		{
+			"id": "filter_fields_filterfields",
+			"label": "FilterFields",
+			"file_type": "code",
+			"source_file": "src/components/dashboard/filter-fields.tsx"
+		},
+		{
+			"id": "filter_fields_filter_config",
+			"label": "FILTER_CONFIG",
+			"file_type": "code",
+			"source_file": "src/components/dashboard/filter-fields.tsx"
+		},
+		{
+			"id": "active_filters_activefilters",
+			"label": "ActiveFilters",
+			"file_type": "code",
+			"source_file": "src/components/dashboard/active-filters.tsx"
+		},
+		{
+			"id": "filter_badge_filterbadge",
+			"label": "FilterBadge",
+			"file_type": "code",
+			"source_file": "src/components/dashboard/filter-badge.tsx"
+		},
+		{
+			"id": "bulan_zod_bulanzod",
+			"label": "BulanZod",
+			"file_type": "code",
+			"source_file": "src/components/form/bulan-zod.tsx"
+		},
+		{
+			"id": "input_zod_inputzod",
+			"label": "InputZod",
+			"file_type": "code",
+			"source_file": "src/components/form/input-zod.tsx"
+		},
+		{
+			"id": "tahun_zod_tahunzod",
+			"label": "TahunZod",
+			"file_type": "code",
+			"source_file": "src/components/form/tahun-zod.tsx"
+		},
+		{
+			"id": "file_zod_inputfilezod",
+			"label": "InputFileZod",
+			"file_type": "code",
+			"source_file": "src/components/form/file-zod.tsx"
+		},
+		{
+			"id": "organization_list_organizationlist",
+			"label": "OrganizationList",
+			"file_type": "code",
+			"source_file": "src/components/form/organization-list.tsx"
+		},
+		{
+			"id": "template_user_templateusernav",
+			"label": "TemplateUserNav",
+			"file_type": "code",
+			"source_file": "src/components/template/template-user.tsx"
+		},
+		{
+			"id": "theme_toggle_themetoggle",
+			"label": "ThemeToggle",
+			"file_type": "code",
+			"source_file": "src/components/template/theme-toggle.tsx"
+		},
+		{
+			"id": "template_nav_main_templatenavmain",
+			"label": "TemplateNavMain",
+			"file_type": "code",
+			"source_file": "src/components/template/template-nav-main.tsx"
+		},
+		{
+			"id": "index_apptemplate",
+			"label": "AppTemplate",
+			"file_type": "code",
+			"source_file": "src/components/template/index.tsx"
+		},
+		{
+			"id": "theme_provider_themeprovider",
+			"label": "ThemeProvider",
+			"file_type": "code",
+			"source_file": "src/components/template/theme-provider.tsx"
+		},
+		{
+			"id": "template_section_templatesectioncard",
+			"label": "TemplateSectionCard",
+			"file_type": "code",
+			"source_file": "src/components/template/template-section.tsx"
+		},
+		{
+			"id": "query_provider_queryprovider",
+			"label": "QueryProvider",
+			"file_type": "code",
+			"source_file": "src/components/template/query-provider.tsx"
+		},
+		{
+			"id": "template_header_templateheader",
+			"label": "TemplateHeader",
+			"file_type": "code",
+			"source_file": "src/components/template/template-header.tsx"
+		},
+		{
+			"id": "template_sidebar_templatesidebar",
+			"label": "TemplateSidebar",
+			"file_type": "code",
+			"source_file": "src/components/template/template-sidebar.tsx"
+		},
+		{
+			"id": "refactoring_notes_filter_refactoring",
+			"label": "Filter Component Refactoring Summary",
+			"file_type": "document",
+			"source_file": "src/components/dashboard/REFACTORING_NOTES.md",
+			"rationale": "Documents the decomposition of the dashboard filter into specialized components for better modularity and maintainability."
+		}
+	],
+	"edges": [
+		{
+			"source": "proxy_proxy",
+			"target": "proxy_renewaccess",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.95,
+			"source_file": "src/proxy.ts"
+		},
+		{
+			"source": "login_form_loginform",
+			"target": "login_action_dologin",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/app/login/login-form.tsx"
+		},
+		{
+			"source": "dashboard_filter_tunkinfiltercomponent",
+			"target": "hooks_usetunkinfilter_usetunkinfilter",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/app/dashboard/filter.tsx"
+		},
+		{
+			"source": "dashboard_filter_tunkinfiltercomponent",
+			"target": "dashboard_form_dialog_tunkinformdialog",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.9,
+			"source_file": "src/app/dashboard/filter.tsx"
+		},
+		{
+			"source": "dashboard_page_dashboardpage",
+			"target": "dashboard_filter_tunkinfiltercomponent",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/app/dashboard/page.tsx"
+		},
+		{
+			"source": "dashboard_page_dashboardpage",
+			"target": "dashboard_component_tunkincomponent",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/app/dashboard/page.tsx"
+		},
+		{
+			"source": "dashboard_component_tunkincomponent",
+			"target": "dashboard_action_fetchtunkin",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/app/dashboard/component.tsx"
+		},
+		{
+			"source": "hooks_usetunkinfilter_usetunkinfilter",
+			"target": "hooks_usedebouncecallback_usedebouncecallback",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/hooks/use-tunkin-filter.ts"
+		},
+		{
+			"source": "hooks_usedebouncecallback_usedebouncecallback",
+			"target": "hooks_useunmount_useunmount",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/hooks/use-debounce-callback.tsx"
+		},
+		{
+			"source": "hooks_usedebouncevalue_usedebouncevalue",
+			"target": "hooks_usedebouncecallback_usedebouncecallback",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/hooks/use-debounce-value.tsx"
+		},
+		{
+			"source": "login_form_loginform",
+			"target": "dashboard_form_dialog_tunkinformdialog",
+			"relation": "semantically_similar_to",
+			"confidence": "INFERRED",
+			"confidence_score": 0.8,
+			"source_file": "src/app/login/login-form.tsx"
+		},
+		{
+			"source": "dashboard_template_template",
+			"target": "login_template_template",
+			"relation": "semantically_similar_to",
+			"confidence": "INFERRED",
+			"confidence_score": 0.9,
+			"source_file": "src/app/dashboard/template.tsx"
+		},
+		{
+			"source": "proxy_proxy",
+			"target": "dashboard_layout_template",
+			"relation": "conceptually_related_to",
+			"confidence": "INFERRED",
+			"confidence_score": 0.85,
+			"source_file": "src/proxy.ts"
+		},
+		{
+			"source": "page_home",
+			"target": "dashboard_page_dashboardpage",
+			"relation": "references",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.9,
+			"source_file": "src/app/page.tsx"
+		},
+		{
+			"source": "uploadhook_usetunkinformdialog",
+			"target": "tunkin_uploadtunkinschema",
+			"relation": "references",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/hooks/upload-hook.ts"
+		},
+		{
+			"source": "tunkin_tunkintableheders",
+			"target": "commons_columndef",
+			"relation": "references",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/tipes/tunkin.ts"
+		},
+		{
+			"source": "session_getaccesstoken",
+			"target": "session_getsession",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"source": "session_getexptoken",
+			"target": "session_decodetoken",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"source": "session_createsession",
+			"target": "session_getexptoken",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"source": "session_getuser",
+			"target": "session_getaccesstoken",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"source": "session_getuser",
+			"target": "session_decodetoken",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"source": "auth_renewtoken",
+			"target": "session_getsession",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/lib/auth.ts"
+		},
+		{
+			"source": "auth_renewtoken",
+			"target": "utils_appconfig",
+			"relation": "references",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/lib/auth.ts"
+		},
+		{
+			"source": "auth_logout",
+			"target": "session_destroysession",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/lib/auth.ts"
+		},
+		{
+			"source": "utils_geturut",
+			"target": "commons_pageresponse",
+			"relation": "references",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/lib/utils.ts"
+		},
+		{
+			"source": "fetchhelper_fetchdata",
+			"target": "commons_baseresponse",
+			"relation": "references",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/lib/fetch-helper.ts"
+		},
+		{
+			"source": "organization_fetchorganization",
+			"target": "session_getaccesstoken",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/action/server/organization.ts"
+		},
+		{
+			"source": "organization_fetchorganization",
+			"target": "utils_appconfig",
+			"relation": "references",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/action/server/organization.ts"
+		},
+		{
+			"source": "loadingtable_loadingtable",
+			"target": "commons_columndef",
+			"relation": "references",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/commons/loading-table.tsx"
+		},
+		{
+			"source": "pageable_paginationbuilder",
+			"target": "commons_pageresponse",
+			"relation": "references",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/commons/pageable.tsx"
+		},
+		{
+			"source": "pageable_paginationbuilder",
+			"target": "button_button",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/commons/pageable.tsx"
+		},
+		{
+			"source": "button_button",
+			"target": "utils_cn",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/ui/button.tsx"
+		},
+		{
+			"source": "pagination_pagination",
+			"target": "button_button",
+			"relation": "references",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/ui/pagination.tsx"
+		},
+		{
+			"source": "session_createsession",
+			"target": "auth_logintoken",
+			"relation": "references",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"source": "sidebar_sidebar",
+			"target": "sheet_sheet",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/ui/sidebar.tsx"
+		},
+		{
+			"source": "sidebar_sidebar",
+			"target": "sheet_sheetcontent",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/ui/sidebar.tsx"
+		},
+		{
+			"source": "sidebar_sidebar",
+			"target": "sidebar_usesidebar",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/ui/sidebar.tsx"
+		},
+		{
+			"source": "sidebar_sidebartrigger",
+			"target": "sidebar_usesidebar",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/ui/sidebar.tsx"
+		},
+		{
+			"source": "command_commanddialog",
+			"target": "dialog_dialog",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/ui/command.tsx"
+		},
+		{
+			"source": "command_commanddialog",
+			"target": "command_command",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/ui/command.tsx"
+		},
+		{
+			"source": "filter_fields_filterfields",
+			"target": "input_input",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/dashboard/filter-fields.tsx"
+		},
+		{
+			"source": "filter_fields_filterfields",
+			"target": "label_label",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/dashboard/filter-fields.tsx"
+		},
+		{
+			"source": "filter_fields_filterfields",
+			"target": "filter_fields_filter_config",
+			"relation": "references",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/dashboard/filter-fields.tsx"
+		},
+		{
+			"source": "chart_charttooltipcontent",
+			"target": "chart_usechart",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/ui/chart.tsx"
+		},
+		{
+			"source": "drawer_drawer",
+			"target": "sheet_sheet",
+			"relation": "semantically_similar_to",
+			"confidence": "INFERRED",
+			"confidence_score": 0.85,
+			"source_file": "src/components/ui/drawer.tsx"
+		},
+		{
+			"source": "dialog_dialog",
+			"target": "drawer_drawer",
+			"relation": "semantically_similar_to",
+			"confidence": "INFERRED",
+			"confidence_score": 0.8,
+			"source_file": "src/components/ui/dialog.tsx"
+		},
+		{
+			"source": "active_filters_activefilters",
+			"target": "filter_badge_filterbadge",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.95,
+			"source_file": "src/components/dashboard/active-filters.tsx"
+		},
+		{
+			"source": "index_apptemplate",
+			"target": "template_sidebar_templatesidebar",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/template/index.tsx"
+		},
+		{
+			"source": "index_apptemplate",
+			"target": "template_header_templateheader",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/template/index.tsx"
+		},
+		{
+			"source": "template_sidebar_templatesidebar",
+			"target": "template_nav_main_templatenavmain",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/template/template-sidebar.tsx"
+		},
+		{
+			"source": "template_sidebar_templatesidebar",
+			"target": "template_user_template_usernav",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/template/template-sidebar.tsx"
+		},
+		{
+			"source": "template_header_templateheader",
+			"target": "theme_toggle_themetoggle",
+			"relation": "calls",
+			"confidence": "EXTRACTED",
+			"confidence_score": 1.0,
+			"source_file": "src/components/template/template-header.tsx"
+		},
+		{
+			"source": "refactoring_notes_filter_refactoring",
+			"target": "active_filters_activefilters",
+			"relation": "rationale_for",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.95,
+			"source_file": "src/components/dashboard/REFACTORING_NOTES.md"
+		},
+		{
+			"source": "refactoring_notes_filter_refactoring",
+			"target": "filter_badge_filterbadge",
+			"relation": "rationale_for",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.95,
+			"source_file": "src/components/dashboard/REFACTORING_NOTES.md"
+		},
+		{
+			"source": "bulan_zod_bulanzod",
+			"target": "tahun_zod_tahunzod",
+			"relation": "semantically_similar_to",
+			"confidence": "INFERRED",
+			"confidence_score": 0.9,
+			"source_file": "src/components/form/bulan-zod.tsx"
+		},
+		{
+			"source": "input_zod_inputzod",
+			"target": "file_zod_inputfilezod",
+			"relation": "semantically_similar_to",
+			"confidence": "INFERRED",
+			"confidence_score": 0.8,
+			"source_file": "src/components/form/input-zod.tsx"
+		},
+		{
+			"source": "organization_list_organizationlist",
+			"target": "query_provider_queryprovider",
+			"relation": "conceptually_related_to",
+			"confidence": "INFERRED",
+			"confidence_score": 0.7,
+			"source_file": "src/components/form/organization-list.tsx"
+		}
+	],
+	"hyperedges": [
+		{
+			"id": "auth_flow",
+			"label": "Authentication Flow",
+			"nodes": ["proxy_proxy", "login_action_dologin", "login_form_loginform"],
+			"relation": "implement",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.95,
+			"source_file": "src/proxy.ts"
+		},
+		{
+			"id": "dashboard_data_management",
+			"label": "Dashboard Data Management",
+			"nodes": [
+				"dashboard_page_dashboardpage",
+				"dashboard_component_tunkincomponent",
+				"dashboard_action_fetchtunkin",
+				"hooks_usetunkinfilter_usetunkinfilter"
+			],
+			"relation": "participate_in",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.9,
+			"source_file": "src/app/dashboard/page.tsx"
+		},
+		{
+			"id": "filter_pattern",
+			"label": "URL-driven Filter Pattern",
+			"nodes": [
+				"hooks_usetunkinfilter_usetunkinfilter",
+				"hooks_usedebouncecallback_usedebouncecallback",
+				"dashboard_filter_tunkinfiltercomponent"
+			],
+			"relation": "implement",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.9,
+			"source_file": "src/hooks/use-tunkin-filter.ts"
+		},
+		{
+			"id": "auth_infrastructure",
+			"label": "Authentication Infrastructure",
+			"nodes": [
+				"session_getsession",
+				"auth_renewtoken",
+				"auth_logintoken",
+				"session_createsession"
+			],
+			"relation": "form",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.95,
+			"source_file": "src/lib/session.ts"
+		},
+		{
+			"id": "form_ui_system",
+			"label": "Form UI System",
+			"nodes": ["form_form", "field_field", "formzod_inputzodprops"],
+			"relation": "implement",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.9,
+			"source_file": "src/components/ui/form.tsx"
+		},
+		{
+			"id": "tunkin_domain",
+			"label": "Tunkin Domain Logic",
+			"nodes": [
+				"tunkin_tunkin",
+				"tunkin_uploadtunkinschema",
+				"uploadhook_usetunkinformdialog"
+			],
+			"relation": "participate_in",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.95,
+			"source_file": "src/tipes/tunkin.ts"
+		},
+		{
+			"id": "overlay_components",
+			"label": "Overlay Components Pattern",
+			"nodes": ["dialog_dialog", "drawer_drawer", "sheet_sheet"],
+			"relation": "form",
+			"confidence": "INFERRED",
+			"confidence_score": 0.9,
+			"source_file": "src/components/ui/dialog.tsx"
+		},
+		{
+			"id": "form_input_components",
+			"label": "Form Input Components",
+			"nodes": [
+				"input_input",
+				"select_select",
+				"switch_switch",
+				"toggle_toggle"
+			],
+			"relation": "participate_in",
+			"confidence": "INFERRED",
+			"confidence_score": 0.85,
+			"source_file": "src/components/ui/input.tsx"
+		},
+		{
+			"id": "sidebar_system",
+			"label": "Sidebar System",
+			"nodes": [
+				"sidebar_sidebar",
+				"sidebar_sidebarprovider",
+				"sidebar_usesidebar",
+				"sidebar_sidebartrigger"
+			],
+			"relation": "implement",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.95,
+			"source_file": "src/components/ui/sidebar.tsx"
+		},
+		{
+			"id": "app_template_structure",
+			"label": "Application Template Structure",
+			"nodes": [
+				"index_apptemplate",
+				"template_sidebar_templatesidebar",
+				"template_header_templateheader",
+				"template_nav_main_templatenavmain",
+				"template_user_templateusernav"
+			],
+			"relation": "form",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.9,
+			"source_file": "src/components/template/index.tsx"
+		},
+		{
+			"id": "zod_form_components",
+			"label": "Zod-based Form Components Pattern",
+			"nodes": [
+				"bulan_zod_bulanzod",
+				"input_zod_inputzod",
+				"tahun_zod_tahunzod",
+				"file_zod_inputfilezod"
+			],
+			"relation": "implement",
+			"confidence": "INFERRED",
+			"confidence_score": 0.85,
+			"source_file": "src/components/form/"
+		},
+		{
+			"id": "dashboard_filter_system",
+			"label": "Dashboard Filter System",
+			"nodes": [
+				"active_filters_activefilters",
+				"filter_badge_filterbadge",
+				"refactoring_notes_filter_refactoring"
+			],
+			"relation": "participate_in",
+			"confidence": "EXTRACTED",
+			"confidence_score": 0.95,
+			"source_file": "src/components/dashboard/REFACTORING_NOTES.md"
+		}
+	],
+	"input_tokens": 0,
+	"output_tokens": 0
+}

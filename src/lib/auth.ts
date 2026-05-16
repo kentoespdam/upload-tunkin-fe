@@ -1,26 +1,12 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { destroySession, getSession } from "./session";
-import { appConfig } from "./utils";
+import { signOut } from "./session";
 
-export const renewToken = async () => {
-	const session = await getSession();
-	const req = await fetch(`${appConfig.apiUrl}/refresh`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({ token: session.refresh_token }),
-	});
-
-	if (!req.ok) redirect("/login");
-
-	const result = await req.json();
-	return result.data;
-};
-
+/**
+ * User-facing logout action.
+ */
 export const logout = async () => {
-	await destroySession();
+	await signOut();
 	redirect("/login");
 };

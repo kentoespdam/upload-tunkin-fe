@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { type UseFormReturn, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import InputZod from "@/components/form/input-zod";
+import { ZodField } from "@/components/form/zod-field";
 import { Button } from "@/components/ui/button";
 import LoadingButtonClient from "@/components/ui/button-loading";
 import {
@@ -18,8 +18,7 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Form } from "@/components/ui/form";
-import { LoginSchema, type LoginToken } from "@/tipes/auth";
-import type { BaseResponse } from "@/tipes/commons";
+import { LoginSchema } from "@/tipes/auth";
 import { doLogin } from "./action";
 
 const FormContent = ({
@@ -35,11 +34,12 @@ const FormContent = ({
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onsubmit)} className="space-y-8">
 				<FieldGroup>
-					<InputZod id="username" form={form} label="Username" />
-					<InputZod
+					<ZodField id="username" form={form} label="Username" variant="text" />
+					<ZodField
 						id="password"
 						form={form}
 						label="Password"
+						variant="text"
 						inputType="password"
 					/>
 				</FieldGroup>
@@ -75,13 +75,16 @@ const LoginForm = () => {
 	});
 	const { mutate, isPending } = useMutation({
 		mutationFn: doLogin,
-		onSuccess: (data: BaseResponse<LoginToken>) => {
-			if (data.errors) throw data.errors;
-			toast.success(data.message);
+		onSuccess: (result) => {
+			if (!result.ok) {
+				toast.error(result.errors?.join("\n") || result.message);
+				return;
+			}
+			toast.success("Login successful");
 			push("/dashboard");
 		},
-		onError: (error: string[]) => {
-			toast.error(error.join("\n"));
+		onError: (error) => {
+			toast.error(error.message || "An unexpected error occurred");
 		},
 	});
 

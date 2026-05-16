@@ -10,8 +10,8 @@ const queryClient = new QueryClient({
 		},
 	},
 });
-const Template = ({ children }: { children: React.ReactNode }) => {
+const DashboardTemplate = ({ children }: { children: React.ReactNode }) => {
 	return <QueryProvider queryClient={queryClient}>{children}</QueryProvider>;
 };
 
-export default Template;
+export default DashboardTemplate;

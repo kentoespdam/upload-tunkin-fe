@@ -1,15 +1,20 @@
 "use client";
 
 import { ChevronDown, ChevronUp, Filter, RotateCcw } from "lucide-react";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { ActiveFilters } from "@/components/dashboard/active-filters";
 import FilterFields from "@/components/dashboard/filter-fields";
+import UploadTunkinDialog from "@/components/form/upload-tunkin-dialog";
 import { Button } from "@/components/ui/button";
-import { useTunkinFilter } from "@/hooks/use-tunkin-filter";
 import { cn } from "@/lib/utils";
-import TunkinFormDialog from "./form-dialog";
+import type { OrganizationMini } from "@/tipes/organization";
+import { useFilterContext } from "./filter-provider";
 
-const TunkinFilterComponent = () => {
+interface TunkinFilterProps {
+	orgs: OrganizationMini[];
+}
+
+const TunkinFilterComponent = ({ orgs }: TunkinFilterProps) => {
 	const {
 		periode,
 		nipam,
@@ -20,37 +25,17 @@ const TunkinFilterComponent = () => {
 		clearFilters,
 		hasActiveFilters,
 		activeFilterCount,
-	} = useTunkinFilter();
+	} = useFilterContext();
 
 	const [showFilters, setShowFilters] = useState(true);
-	const filterRef = useRef<HTMLDivElement>(null);
 
 	const toggleFilters = useCallback(() => {
 		setShowFilters((prev) => !prev);
 	}, []);
 
-	// Close filters when clicking outside
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				filterRef.current &&
-				!filterRef.current.contains(event.target as Node)
-			) {
-				// Optional: close on outside click
-				// setShowFilters(false);
-			}
-		};
-
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => document.removeEventListener("mousedown", handleClickOutside);
-	}, []);
-
 	return (
-		<div
-			ref={filterRef}
-			className="sticky top-0 z-10 bg-linear-to-b from-background/95 to-background/90 backdrop-blur supports-backdrop-filter:bg-linear-to-b supports-backdrop-filter:from-background/60 supports-backdrop-filter:to-background/50 border-b shadow-sm"
-		>
-			<div className="container mx-auto px-4 py-4">
+		<div className="shrink-0 bg-linear-to-b from-background/95 to-background/90 backdrop-blur supports-backdrop-filter:bg-linear-to-b supports-backdrop-filter:from-background/60 supports-backdrop-filter:to-background/50 border-b shadow-sm rounded-md">
+			<div className="w-full px-4 py-4">
 				{/* Filter Header */}
 				<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
 					{/* Filter Toggle Button */}
@@ -90,7 +75,7 @@ const TunkinFilterComponent = () => {
 								</Button>
 							</div>
 						)}
-						<TunkinFormDialog />
+						<UploadTunkinDialog />
 					</div>
 				</div>
 
@@ -109,6 +94,7 @@ const TunkinFilterComponent = () => {
 							nipam={nipam}
 							nama={nama}
 							orgId={orgId}
+							orgs={orgs}
 							onInputChange={handleInputChange}
 							onSelectChange={handleSelectChange}
 						/>

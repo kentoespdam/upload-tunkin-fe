@@ -1,81 +1,117 @@
-import { cookies } from "next/headers";
-import type {
-	BaseToken,
-	JwtToken,
-	JwtUserToken,
-	LoginToken,
-} from "@/tipes/auth";
 import "server-only";
+import { decodeJwt } from "jose";
+import { cookies } from "next/headers";
+import type { JwtUserToken, LoginToken } from "@/tipes/auth";
 
-export const getSession = async (): Promise<{
-	access_token: string;
-	refresh_token: string;
-}> => {
-	const cookieStore = await cookies();
-	const refresh_token = cookieStore.get("refresh_token")?.value ?? "";
-	const access_token = cookieStore.get("access_token")?.value ?? "";
+export type Session = {
+	accessToken: string;
+	refreshToken: string;
+	user: JwtUserToken | null;
+	expiresAt: number;
+	isExpired: boolean;
+};
+
+/**
+ * Extracts the expiration time from a JWT.
+ */
+export const getTokenExp = (token: string): number => {
+	try {
+		const decoded = decodeJwt<JwtUserToken>(token);
+		return (decoded?.exp || 0) * 1000;
+	} catch {
+		return 0;
+	}
+};
+
+/**
+ * Returns the current session state from a given cookie store.
+ */
+export const getSessionFromCookies = (cookieStore: {
+	get: (name: string) => { value: string } | undefined;
+}): Session => {
+	const accessToken = cookieStore.get("access_token")?.value ?? "";
+	const refreshToken = cookieStore.get("refresh_token")?.value ?? "";
+
+	if (!accessToken) {
+		return {
+			accessToken: "",
+			refreshToken,
+			user: null,
+			expiresAt: 0,
+			isExpired: true,
+		};
+	}
+
+	let user: JwtUserToken | null = null;
+	try {
+		user = decodeJwt<JwtUserToken>(accessToken);
+	} catch (_e) {
+		// Ignore decode errors
+	}
+
+	const expiresAt = user ? user.exp * 1000 : 0;
+	const isExpired = Date.now() >= expiresAt - 5000; // 5s buffer
 
 	return {
-		access_token,
-		refresh_token,
+		accessToken,
+		refreshToken,
+		user,
+		expiresAt,
+		isExpired,
 	};
 };
 
-export const getAccessToken = async () => {
-	const { access_token } = await getSession();
-	return access_token;
+/**
+ * Returns the current session state from cookies.
+ * Synchronous and network-free.
+ */
+export const currentSession = async (): Promise<Session> => {
+	const cookieStore = await cookies();
+	return getSessionFromCookies(cookieStore);
 };
 
-export const decodeToken = async (
-	token: string,
-): Promise<JwtUserToken | JwtToken | null> => {
-	try {
-		return JSON.parse(atob(token.split(".")[1]));
-	} catch (e: unknown) {
-		console.log(e);
-		return null;
-	}
-};
+/**
+ * Writes tokens to HttpOnly cookies.
+ */
+export const signIn = async (token: LoginToken) => {
+	const cookieStore = await cookies();
 
-export const getExpToken = async (token: string) => {
-	const decoded_token = await decodeToken(token);
-	return decoded_token ? decoded_token.exp * 1000 : 0;
-};
+	const expiresAt = token.access_token
+		? new Date(getTokenExp(token.access_token))
+		: undefined;
 
-const setCookies = async (name: string, token: string) => {
-	try {
-		const exp = await getExpToken(token);
-		const cookieStore = await cookies();
+	const commonOptions = {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+		sameSite: "lax" as const,
+		path: "/",
+	};
 
-		cookieStore.set(name, token, {
-			httpOnly: true,
-			secure: true,
-			expires: exp,
-			sameSite: "lax",
-			path: "/",
+	cookieStore.set("access_token", token.access_token, {
+		...commonOptions,
+		expires: expiresAt,
+	});
+
+	if (token.refresh_token) {
+		const refreshExpiresAt = new Date(getTokenExp(token.refresh_token));
+
+		cookieStore.set("refresh_token", token.refresh_token, {
+			...commonOptions,
+			expires: refreshExpiresAt || expiresAt,
 		});
-	} catch (e) {
-		console.log(e);
 	}
 };
 
-export const createSession = async (token: LoginToken) => {
-	await setCookies("access_token", token.access_token);
-	if (token.refresh_token)
-		await setCookies("refresh_token", token.refresh_token);
-};
-
-export const refreshSession = async (token: BaseToken) =>
-	await setCookies("access_token", token.access_token);
-
-export const destroySession = async () => {
+/**
+ * Removes session cookies.
+ */
+export const signOut = async () => {
 	const cookieStore = await cookies();
 	cookieStore.delete("access_token");
 	cookieStore.delete("refresh_token");
 };
 
-export const getUser = async () => {
-	const token = await getAccessToken();
-	const decoded_token = await decodeToken(token);
-	return decoded_token;
-};
+/**
+ * Alias for signIn, used during token refresh.
+ */
+export const writeTokens = signIn;

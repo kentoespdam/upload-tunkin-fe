@@ -1,4 +1,4 @@
 export interface OrganizationMini {
-	org_id: string;
-	org_name: string;
+	id: string;
+	name: string;
 }

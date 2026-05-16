@@ -1,0 +1,422 @@
+{
+	"openapi": "3.1.0",
+	"info": { "title": "Upload Tunkin API", "version": "0.1.0" },
+	"paths": {
+		"/": {
+			"get": {
+				"summary": "Index",
+				"operationId": "index__get",
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": { "application/json": { "schema": {} } }
+					}
+				}
+			}
+		},
+		"/token": {
+			"post": {
+				"tags": ["Authentication Endpoints"],
+				"summary": "Authenticate User and Get Tokens",
+				"operationId": "authenticate_user_token_post",
+				"requestBody": {
+					"content": {
+						"application/x-www-form-urlencoded": {
+							"schema": {
+								"$ref": "#/components/schemas/Body_authenticate_user_token_post"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/Token" }
+							}
+						}
+					},
+					"404": { "description": "Not found" },
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+							}
+						}
+					}
+				}
+			}
+		},
+		"/refresh": {
+			"post": {
+				"tags": ["Authentication Endpoints"],
+				"summary": "Refresh Access Token",
+				"operationId": "refresh_token_refresh_post",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": { "$ref": "#/components/schemas/RefreshTokenRequest" }
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/BaseToken" }
+							}
+						}
+					},
+					"404": { "description": "Not found" },
+					"401": { "description": "Invalid or expired refresh token" },
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+							}
+						}
+					}
+				}
+			}
+		},
+		"/me": {
+			"get": {
+				"tags": ["Authentication Endpoints"],
+				"summary": "Read Users Me",
+				"operationId": "read_users_me_me_get",
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": { "application/json": { "schema": {} } }
+					},
+					"404": { "description": "Not found" },
+					"401": { "description": "Unauthorized" },
+					"400": { "description": "Inactive user" }
+				},
+				"security": [{ "OAuth2PasswordBearer": [] }]
+			}
+		},
+		"/validate": {
+			"options": {
+				"tags": ["Authentication Endpoints"],
+				"summary": "Validate token",
+				"operationId": "validate_token_validate_options",
+				"parameters": [
+					{
+						"name": "token",
+						"in": "query",
+						"required": true,
+						"schema": { "type": "string", "title": "Token" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": { "application/json": { "schema": {} } }
+					},
+					"404": { "description": "Not found" },
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+							}
+						}
+					}
+				}
+			}
+		},
+		"/tunkin/exists/{periode}": {
+			"get": {
+				"tags": ["Tunkin Endpoints"],
+				"summary": "Cek Data Tunkin",
+				"operationId": "check_tunkin_exists_tunkin_exists__periode__get",
+				"security": [{ "OAuth2PasswordBearer": [] }],
+				"parameters": [
+					{
+						"name": "periode",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string", "title": "Periode" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TunkinExistsResponse"
+								}
+							}
+						}
+					},
+					"404": { "description": "Not found" },
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+							}
+						}
+					}
+				}
+			}
+		},
+		"/tunkin/{periode}": {
+			"get": {
+				"tags": ["Tunkin Endpoints"],
+				"summary": "Data Tunkin",
+				"operationId": "get_tunkin_data_tunkin__periode__get",
+				"security": [{ "OAuth2PasswordBearer": [] }],
+				"parameters": [
+					{
+						"name": "periode",
+						"in": "path",
+						"required": true,
+						"schema": { "type": "string", "title": "Periode" }
+					},
+					{
+						"name": "page",
+						"in": "query",
+						"required": false,
+						"schema": { "type": "integer", "default": 1, "title": "Page" }
+					},
+					{
+						"name": "size",
+						"in": "query",
+						"required": false,
+						"schema": { "type": "integer", "default": 10, "title": "Size" }
+					},
+					{
+						"name": "nipam",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"anyOf": [{ "type": "string" }, { "type": "null" }],
+							"title": "Nipam"
+						}
+					},
+					{
+						"name": "nama",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"anyOf": [{ "type": "string" }, { "type": "null" }],
+							"title": "Nama"
+						}
+					},
+					{
+						"name": "orgId",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"anyOf": [{ "type": "string" }, { "type": "null" }],
+							"title": "Orgid"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": { "application/json": { "schema": {} } }
+					},
+					"404": { "description": "Not found" },
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+							}
+						}
+					}
+				}
+			}
+		},
+		"/tunkin/upload": {
+			"post": {
+				"tags": ["Tunkin Endpoints"],
+				"summary": "Upload File Excel Tunkin",
+				"operationId": "upload_tunkin_file_tunkin_upload_post",
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"$ref": "#/components/schemas/Body_upload_tunkin_file_tunkin_upload_post"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": { "application/json": { "schema": {} } }
+					},
+					"404": { "description": "Not found" },
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+							}
+						}
+					}
+				},
+				"security": [{ "OAuth2PasswordBearer": [] }]
+			}
+		},
+		"/tunkin/template/download": {
+			"get": {
+				"tags": ["Tunkin Endpoints"],
+				"summary": "Download Template File",
+				"description": "Download the Tunkin template Excel file.",
+				"operationId": "download_template_file_tunkin_template_download_get",
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": { "application/json": { "schema": {} } }
+					},
+					"404": { "description": "Not found" }
+				},
+				"security": [{ "OAuth2PasswordBearer": [] }]
+			}
+		},
+		"/organization": {
+			"get": {
+				"tags": ["Organization"],
+				"summary": "Get Organizations",
+				"description": "List all organizations. Requires valid JWT token (any role).",
+				"operationId": "get_organizations_organization_get",
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": { "application/json": { "schema": {} } }
+					}
+				},
+				"security": [{ "OAuth2PasswordBearer": [] }]
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"BaseToken": {
+				"properties": {
+					"access_token": { "type": "string", "title": "Access Token" },
+					"token_type": { "type": "string", "title": "Token Type" },
+					"expires_in": { "type": "integer", "title": "Expires In" }
+				},
+				"type": "object",
+				"required": ["access_token", "token_type", "expires_in"],
+				"title": "BaseToken"
+			},
+			"Body_authenticate_user_token_post": {
+				"properties": {
+					"grant_type": {
+						"anyOf": [
+							{ "type": "string", "pattern": "^password$" },
+							{ "type": "null" }
+						],
+						"title": "Grant Type"
+					},
+					"username": { "type": "string", "title": "Username" },
+					"password": {
+						"type": "string",
+						"format": "password",
+						"title": "Password"
+					},
+					"scope": { "type": "string", "title": "Scope", "default": "" },
+					"client_id": {
+						"anyOf": [{ "type": "string" }, { "type": "null" }],
+						"title": "Client Id"
+					},
+					"client_secret": {
+						"anyOf": [{ "type": "string" }, { "type": "null" }],
+						"format": "password",
+						"title": "Client Secret"
+					}
+				},
+				"type": "object",
+				"required": ["username", "password"],
+				"title": "Body_authenticate_user_token_post"
+			},
+			"Body_upload_tunkin_file_tunkin_upload_post": {
+				"properties": {
+					"periode": { "type": "string", "title": "Periode" },
+					"file": { "type": "string", "format": "binary", "title": "File" }
+				},
+				"type": "object",
+				"required": ["periode", "file"],
+				"title": "Body_upload_tunkin_file_tunkin_upload_post"
+			},
+			"HTTPValidationError": {
+				"properties": {
+					"detail": {
+						"items": { "$ref": "#/components/schemas/ValidationError" },
+						"type": "array",
+						"title": "Detail"
+					}
+				},
+				"type": "object",
+				"title": "HTTPValidationError"
+			},
+			"RefreshTokenRequest": {
+				"properties": { "token": { "type": "string", "title": "Token" } },
+				"type": "object",
+				"required": ["token"],
+				"title": "RefreshTokenRequest"
+			},
+			"TunkinExistsResponse": {
+				"properties": {
+					"exists": { "type": "boolean", "title": "Exists" },
+					"count": { "type": "integer", "title": "Count" }
+				},
+				"type": "object",
+				"required": ["exists", "count"],
+				"title": "TunkinExistsResponse"
+			},
+			"Token": {
+				"properties": {
+					"access_token": { "type": "string", "title": "Access Token" },
+					"token_type": { "type": "string", "title": "Token Type" },
+					"expires_in": { "type": "integer", "title": "Expires In" },
+					"refresh_token": { "type": "string", "title": "Refresh Token" }
+				},
+				"type": "object",
+				"required": [
+					"access_token",
+					"token_type",
+					"expires_in",
+					"refresh_token"
+				],
+				"title": "Token"
+			},
+			"ValidationError": {
+				"properties": {
+					"loc": {
+						"items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+						"type": "array",
+						"title": "Location"
+					},
+					"msg": { "type": "string", "title": "Message" },
+					"type": { "type": "string", "title": "Error Type" }
+				},
+				"type": "object",
+				"required": ["loc", "msg", "type"],
+				"title": "ValidationError"
+			}
+		},
+		"securitySchemes": {
+			"OAuth2PasswordBearer": {
+				"type": "oauth2",
+				"flows": { "password": { "scopes": {}, "tokenUrl": "token" } }
+			}
+		}
+	}
+}

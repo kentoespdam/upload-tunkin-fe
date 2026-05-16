@@ -1,73 +1,180 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { createSession, destroySession, getSession } from "./lib/session";
+import { rawFetch } from "./lib/api";
+import {
+	getSessionFromCookies,
+	getTokenExp,
+	type Session,
+} from "./lib/session";
 import { appConfig } from "./lib/utils";
+import type { BaseToken } from "./tipes/auth";
 
 export const config = {
 	matcher: [
-		"/((?!_next/static|_next/image|favicon.ico|logo_pdam_40x40|/login|test).*)",
+		"/((?!_next/static|_next/image|favicon.ico|logo_pdam_40x40|sitemap.xml|robots.txt).*)",
 	],
 };
 
-const publicRoutes = ["/login"];
+const PROTECTED_PREFIXES = ["/dashboard"];
+const REFRESH_BUFFER_MS = 10_000;
 
-export default async function proxy(req: NextRequest) {
-	const path = req.nextUrl.pathname;
-	const isPublicRoute = publicRoutes.includes(path);
-	const session = await getSession();
-	const isAuthenticated = session.refresh_token !== "";
-	const isAuthorized = session.access_token !== "";
+/**
+ * Resolves session from request cookies.
+ */
+function resolveSession(req: NextRequest): Session {
+	return getSessionFromCookies(req.cookies);
+}
 
-	// Jika tidak ada refresh token, redirect ke login
-	if (!isAuthenticated) {
-		if (!isPublicRoute) {
-			return NextResponse.redirect(new URL("/login", req.url));
-		}
-		return NextResponse.next();
+/**
+ * Sets session cookies on the response.
+ */
+function setCookieOnResponse(
+	res: NextResponse,
+	accessToken: string,
+	refreshToken: string,
+) {
+	const accessExp = getTokenExp(accessToken);
+	const refreshExp = getTokenExp(refreshToken);
+
+	const commonOptions = {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+		sameSite: "lax" as const,
+		path: "/",
+	};
+
+	if (accessToken) {
+		res.cookies.set("access_token", accessToken, {
+			...commonOptions,
+			expires: accessExp ? new Date(accessExp) : undefined,
+		});
 	}
 
-	// Jika access token tidak ada, coba refresh
-	if (!isAuthorized) {
-		const newToken = await renewAccess(session.refresh_token);
-		if (newToken) {
-			// Berhasil refresh, buat response dan set cookies langsung
-			const response = NextResponse.next();
-			await createSession(newToken);
-			return response;
+	if (refreshToken) {
+		res.cookies.set("refresh_token", refreshToken, {
+			...commonOptions,
+			expires: refreshExp ? new Date(refreshExp) : undefined,
+		});
+	}
+}
+
+export async function proxy(req: NextRequest) {
+	const path = req.nextUrl.pathname;
+	const session = resolveSession(req);
+
+	// 1. API Proxy
+	if (path.startsWith("/api/proxy/")) {
+		const apiUrl = appConfig.apiUrl?.replace(/\/$/, "") || "";
+		const targetPath = path.replace("/api/proxy", ""); // includes leading slash if path was /api/proxy/something
+		const targetUrl = new URL(apiUrl + targetPath + req.nextUrl.search);
+
+		const headers = new Headers(req.headers);
+		headers.delete("host"); // Let fetch set the correct host
+
+		// Handle refresh for API proxy if needed
+		const now = Date.now();
+		const needsRefresh =
+			session.refreshToken &&
+			(session.isExpired || now >= session.expiresAt - REFRESH_BUFFER_MS);
+
+		if (needsRefresh) {
+			try {
+				const result = await rawFetch<BaseToken>("/refresh", {
+					method: "POST",
+					body: JSON.stringify({ token: session.refreshToken }),
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+
+				if (result?.access_token) {
+					session.accessToken = result.access_token;
+				}
+			} catch (error) {
+				console.error("API Proxy token refresh failed:", error);
+			}
 		}
 
-		// Gagal refresh - hapus session untuk menghindari loop
-		await destroySession();
-		if (!isPublicRoute) {
+		if (session.accessToken) {
+			headers.set("Authorization", `Bearer ${session.accessToken}`);
+		}
+
+		const res = NextResponse.rewrite(targetUrl, {
+			request: {
+				headers: headers,
+			},
+		});
+
+		if (session.accessToken) {
+			setCookieOnResponse(res, session.accessToken, session.refreshToken);
+		}
+		return res;
+	}
+
+	// 2. Logged-in redirect from /login
+	if (path === "/login" && session.refreshToken && !session.isExpired) {
+		return NextResponse.redirect(new URL("/dashboard", req.url));
+	}
+
+	// 3. Protected Route Gatekeeper
+	const isProtected = PROTECTED_PREFIXES.some((prefix) =>
+		path.startsWith(prefix),
+	);
+
+	if (isProtected) {
+		if (!session.refreshToken) {
 			return NextResponse.redirect(new URL("/login", req.url));
 		}
+
+		// Check if token needs refresh (with buffer)
+		const now = Date.now();
+		const needsRefresh =
+			session.isExpired || now >= session.expiresAt - REFRESH_BUFFER_MS;
+
+		if (needsRefresh) {
+			try {
+				const result = await rawFetch<BaseToken>("/refresh", {
+					method: "POST",
+					body: JSON.stringify({ token: session.refreshToken }),
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+
+				if (result?.access_token) {
+					const requestHeaders = new Headers(req.headers);
+					requestHeaders.set("Authorization", `Bearer ${result.access_token}`);
+
+					const res = NextResponse.next({
+						request: {
+							headers: requestHeaders,
+						},
+					});
+					setCookieOnResponse(res, result.access_token, session.refreshToken);
+					return res;
+				}
+			} catch (error) {
+				console.error("Middleware token refresh failed:", error);
+				const res = NextResponse.redirect(new URL("/login", req.url));
+				res.cookies.delete("access_token");
+				res.cookies.delete("refresh_token");
+				return res;
+			}
+		}
+
+		// Sliding cookie for valid session
+		const requestHeaders = new Headers(req.headers);
+		if (session.accessToken) {
+			requestHeaders.set("Authorization", `Bearer ${session.accessToken}`);
+		}
+
+		const res = NextResponse.next({
+			request: {
+				headers: requestHeaders,
+			},
+		});
+		setCookieOnResponse(res, session.accessToken, session.refreshToken);
+		return res;
 	}
 
 	return NextResponse.next();
-}
-
-async function renewAccess(refresh_token: string) {
-	try {
-		const formData = { token: refresh_token };
-		const req = await fetch(`${appConfig.apiUrl}/refresh`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(formData),
-			// Tambahkan timeout untuk menghindari hanging
-			signal: AbortSignal.timeout(10000), // 10 detik timeout
-		});
-
-		if (!req.ok) {
-			console.error(`Refresh token failed with status: ${req.status}`);
-			return null;
-		}
-
-		const result = await req.json();
-		return result.data;
-	} catch (error) {
-		// Tangani network error, timeout, dll
-		console.error("Error during token refresh:", error);
-		return null;
-	}
 }

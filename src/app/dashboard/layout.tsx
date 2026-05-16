@@ -1,13 +1,10 @@
-import { redirect } from "next/navigation";
 import AppTemplate from "@/components/template";
-import { getUser } from "@/lib/session";
-import type { JwtUserToken } from "@/tipes/auth";
+import { requireUser } from "@/lib/dal";
 
-const template = async ({ children }: { children: React.ReactNode }) => {
-	const user = await getUser();
-	if (!user) return redirect("/login");
+const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
+	const user = await requireUser();
 
-	return <AppTemplate user={user as JwtUserToken}>{children}</AppTemplate>;
+	return <AppTemplate user={user}>{children}</AppTemplate>;
 };
 
-export default template;
+export default DashboardLayout;
